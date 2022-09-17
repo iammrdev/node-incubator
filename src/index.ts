@@ -45,8 +45,59 @@ app.get('/videos', (_req: Request, res: Response) => {
     res.send(videos);
 });
 
+type ValidateFunc = (value: any) => boolean;
+
+type ValidateDict = {
+    [key in keyof Video]?: ValidateFunc;
+};
+
 app.post('/videos', (req: Request, res: Response) => {
-    const data = req.body;
+    const data: Video = req.body;
+
+    const validation: ValidateDict = {
+        title: (value: any) => typeof value === 'string',
+        author: (value: any) => typeof value === 'string',
+        availableResolutions: (value: any) => Array.isArray(value) && value.every((item) => typeof item === 'string'),
+        canBeDownloaded: (value: any) => typeof value === 'boolean' || value === undefined,
+        minAgeRestriction: (value: any) => typeof value === 'number' || value === undefined || value === null,
+        createdAt: (value: any) => typeof value === 'string' || value === undefined,
+        publicationDate: (value: any) => typeof value === 'string' || value === undefined,
+    } as const;
+
+    const requiredFields = ['title', 'author', 'availableResolutions'];
+
+    const keys = Object.keys(data);
+
+    const result = requiredFields.every((item) => keys.includes(item));
+
+    if (!result) {
+        res.sendStatus(400);
+        return;
+    }
+
+    const errors: { message: string; field: string }[] = [];
+
+    Object.entries(data).forEach(([key, value]) => {
+        const func = validation[key as keyof Video];
+
+        if (!func) {
+            return;
+        }
+
+        const result = func(value);
+
+        if (!result) {
+            errors.push({
+                message: 'Not valid field',
+                field: key,
+            });
+        }
+    });
+
+    if (errors.length) {
+        res.status(400).send(errors);
+        return;
+    }
 
     const video: Video = {
         id: id++,
@@ -54,8 +105,8 @@ app.post('/videos', (req: Request, res: Response) => {
         author: data.author,
         canBeDownloaded: data.canBeDownloaded || false,
         minAgeRestriction: data.minAgeRestriction || null,
-        createdAt: new Date(),
-        publicationDate: new Date(),
+        createdAt: data.createdAt || new Date(),
+        publicationDate: data.publicationDate || new Date(),
         availableResolutions: data.availableResolutions || [],
     };
 
@@ -77,9 +128,53 @@ app.get('/videos/:id', (req: Request, res: Response) => {
     res.send(video);
 });
 
-app.put('/videos', (req: Request, res: Response) => {
+app.put('/videos/:id', (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const data = req.body;
+    const validation: ValidateDict = {
+        title: (value: any) => typeof value === 'string',
+        author: (value: any) => typeof value === 'string',
+        availableResolutions: (value: any) => Array.isArray(value) && value.every((item) => typeof item === 'string'),
+        canBeDownloaded: (value: any) => typeof value === 'boolean' || value === undefined,
+        minAgeRestriction: (value: any) => typeof value === 'number' || value === undefined || value === null,
+        createdAt: (value: any) => typeof value === 'string' || value === undefined,
+        publicationDate: (value: any) => typeof value === 'string' || value === undefined,
+    } as const;
+
+    const requiredFields = ['title', 'author', 'availableResolutions'];
+
+    const keys = Object.keys(data);
+
+    const result = requiredFields.every((item) => keys.includes(item));
+
+    if (!result) {
+        res.sendStatus(400);
+        return;
+    }
+
+    const errors: { message: string; field: string }[] = [];
+
+    Object.entries(data).forEach(([key, value]) => {
+        const func = validation[key as keyof Video];
+
+        if (!func) {
+            return;
+        }
+
+        const result = func(value);
+
+        if (!result) {
+            errors.push({
+                message: 'Not valid field',
+                field: key,
+            });
+        }
+    });
+
+    if (errors.length) {
+        res.status(400).send(errors);
+        return;
+    }
 
     const video = videos.find((item) => item.id === id);
 
@@ -95,7 +190,7 @@ app.put('/videos', (req: Request, res: Response) => {
         canBeDownloaded: data.canBeDownloaded,
         minAgeRestriction: data.minAgeRestriction,
         createdAt: video.createdAt,
-        publicationDate: new Date(),
+        publicationDate: data.publicationDate,
         availableResolutions: data.availableResolutions,
     };
 
