@@ -18,7 +18,7 @@ interface Video {
     availableResolutions: string[];
 }
 
-const videos: Video[] = [
+let videos: Video[] = [
     {
         id: 1,
         title: 'string',
@@ -35,6 +35,12 @@ app.get('/', (_req: Request, res: Response) => {
     res.send('Hello World!!!');
 });
 
+app.delete('/testing/all-data', (_req: Request, res: Response) => {
+    videos = [];
+
+    res.sendStatus(204);
+});
+
 app.get('/videos', (_req: Request, res: Response) => {
     res.send(videos);
 });
@@ -46,7 +52,7 @@ app.post('/videos', (req: Request, res: Response) => {
         id: id++,
         title: data.title,
         author: data.author,
-        canBeDownloaded: data.canBeDownloaded || true,
+        canBeDownloaded: data.canBeDownloaded || false,
         minAgeRestriction: data.minAgeRestriction || null,
         createdAt: new Date(),
         publicationDate: new Date(),
@@ -69,6 +75,33 @@ app.get('/videos/:id', (req: Request, res: Response) => {
     }
 
     res.send(video);
+});
+
+app.put('/videos', (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const data = req.body;
+
+    const video = videos.find((item) => item.id === id);
+
+    if (!video) {
+        res.sendStatus(404);
+        return;
+    }
+
+    const updated: Video = {
+        id,
+        title: data.title,
+        author: data.author,
+        canBeDownloaded: data.canBeDownloaded,
+        minAgeRestriction: data.minAgeRestriction,
+        createdAt: video.createdAt,
+        publicationDate: new Date(),
+        availableResolutions: data.availableResolutions,
+    };
+
+    videos = videos.map((video) => (video.id === id ? updated : video));
+
+    res.sendStatus(204);
 });
 
 app.delete('/videos/:id', (req: Request, res: Response) => {
