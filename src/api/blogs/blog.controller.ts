@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.types';
-import { BlogValidator } from './blog.validator';
+
 
 const getBlogs = async (_req: Request, res: Response) => {
     const blogs = await BlogService.getAll();
@@ -39,10 +40,11 @@ const deleteBlog = async (req: Request, res: Response) => {
 const createBlog = async (req: Request, res: Response) => {
     const data: Omit<Blog, 'id'> = req.body;
 
-    const errors = BlogValidator.validateData(data);
+    const errors = validationResult(req);
 
-    if (errors.length) {
-        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
+
+    if (!errors.isEmpty()) {
+        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors.array().map(item => ({ field: item.param, message: item.msg })) });
         return;
     }
 
@@ -55,12 +57,12 @@ const updateBlog = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const data: Blog = req.body;
 
-    const errors = BlogValidator.validateData(data);
+    // const errors = BlogValidator.validateData(data);
 
-    if (errors.length) {
-        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-        return;
-    }
+    // if (errors.length) {
+    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
+    //     return;
+    // }
 
     const result = await BlogService.updateById(id, data);
 
