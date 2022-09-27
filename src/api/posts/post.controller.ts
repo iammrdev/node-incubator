@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
+import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import { PostService } from './post.service';
 import { Post } from './post.types';
-// import { PostValidator } from './post.validator';
 
 const getPosts = async (_req: Request, res: Response) => {
     const posts = await PostService.getAll();
@@ -11,7 +11,7 @@ const getPosts = async (_req: Request, res: Response) => {
 };
 
 const getPost = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await PostService.getById(id);
 
@@ -24,7 +24,7 @@ const getPost = async (req: Request, res: Response) => {
 };
 
 const deletePost = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await PostService.deleteById(id);
 
@@ -39,12 +39,21 @@ const deletePost = async (req: Request, res: Response) => {
 const createPost = async (req: Request, res: Response) => {
     const data: Omit<Post, 'id'> = req.body;
 
-    // const errors = PostValidator.validateData(data);
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
 
-    // if (errors.length) {
-    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-    //     return;
-    // }
+    if (!errors.isEmpty()) {
+        res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+        return;
+    }
 
     const result = await PostService.create(data);
 
@@ -52,15 +61,24 @@ const createPost = async (req: Request, res: Response) => {
 };
 
 const updatePost = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const data: Post = req.body;
 
-    // const errors = PostValidator.validateData(data);
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
 
-    // if (errors.length) {
-    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-    //     return;
-    // }
+    if (!errors.isEmpty()) {
+        res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+        return;
+    }
 
     const result = await PostService.updateById(id, data);
 

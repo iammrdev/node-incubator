@@ -9,15 +9,15 @@ const getAll = async () => {
     return PostRepository.getAll();
 };
 
-const updateById = async (id: number, data: Post) => {
+const updateById = async (id: string, data: Post) => {
     return PostRepository.updatePost(id, data);
 };
 
-const deleteById = async (id: number) => {
+const deleteById = async (id: string) => {
     return PostRepository.deletePost(id);
 };
 
-const getById = async (id: number) => {
+const getById = async (id: string) => {
     return PostRepository.getPost(id);
 };
 

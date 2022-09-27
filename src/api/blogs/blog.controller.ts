@@ -4,7 +4,6 @@ import { StatusCodes } from 'http-status-codes';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.types';
 
-
 const getBlogs = async (_req: Request, res: Response) => {
     const blogs = await BlogService.getAll();
 
@@ -12,7 +11,7 @@ const getBlogs = async (_req: Request, res: Response) => {
 };
 
 const getBlog = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await BlogService.getById(id);
 
@@ -25,7 +24,7 @@ const getBlog = async (req: Request, res: Response) => {
 };
 
 const deleteBlog = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await BlogService.deleteById(id);
 
@@ -40,11 +39,19 @@ const deleteBlog = async (req: Request, res: Response) => {
 const createBlog = async (req: Request, res: Response) => {
     const data: Omit<Blog, 'id'> = req.body;
 
-    const errors = validationResult(req);
-
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
 
     if (!errors.isEmpty()) {
-        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors.array().map(item => ({ field: item.param, message: item.msg })) });
+        res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
         return;
     }
 
@@ -54,15 +61,24 @@ const createBlog = async (req: Request, res: Response) => {
 };
 
 const updateBlog = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const data: Blog = req.body;
 
-    // const errors = BlogValidator.validateData(data);
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
 
-    // if (errors.length) {
-    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-    //     return;
-    // }
+    if (!errors.isEmpty()) {
+        res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+        return;
+    }
 
     const result = await BlogService.updateById(id, data);
 

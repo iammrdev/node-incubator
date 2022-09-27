@@ -1,12 +1,12 @@
+import { v4 as uuid } from 'uuid';
 import { Blog } from './blog.types';
 
-let id: number = 0;
 let blogs: Blog[] = [];
 
 export class BlogRepository {
     static createBlog(data: Omit<Blog, 'id'>) {
         const blog: Blog = {
-            id: ++id,
+            id: uuid(),
             name: data.name,
             youtubeUrl: data.youtubeUrl,
         };
@@ -16,7 +16,7 @@ export class BlogRepository {
         return { item: blog };
     }
 
-    static deleteBlog(id: number) {
+    static deleteBlog(id: string) {
         const blog = blogs.find((item) => item.id === id);
 
         if (!blog) {
@@ -38,7 +38,7 @@ export class BlogRepository {
         return blogs;
     }
 
-    static getBlog(id: number) {
+    static getBlog(id: string) {
         const blog = blogs.find((item) => item.id === id);
 
         if (!blog) {
@@ -48,7 +48,7 @@ export class BlogRepository {
         return { item: blog };
     }
 
-    static updateBlog(id: number, data: Blog) {
+    static updateBlog(id: string, data: Blog) {
         const blog = blogs.find((item) => item.id === id);
 
         if (!blog) {

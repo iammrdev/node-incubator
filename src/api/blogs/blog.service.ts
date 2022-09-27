@@ -9,15 +9,15 @@ const getAll = async () => {
     return BlogRepository.getAll();
 };
 
-const updateById = async (id: number, data: Blog) => {
+const updateById = async (id: string, data: Blog) => {
     return BlogRepository.updateBlog(id, data);
 };
 
-const deleteById = async (id: number) => {
+const deleteById = async (id: string) => {
     return BlogRepository.deleteBlog(id);
 };
 
-const getById = async (id: number) => {
+const getById = async (id: string) => {
     return BlogRepository.getBlog(id);
 };
 

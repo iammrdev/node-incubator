@@ -1,12 +1,13 @@
+import { v4 as uuid } from 'uuid';
+import { BlogRepository } from '../blogs/blog.repository';
 import { Post } from './post.types';
 
-let id: number = 0;
 let posts: Post[] = [];
 
 export class PostRepository {
     static createPost(data: Omit<Post, 'id'>) {
         const post: Post = {
-            id: ++id,
+            id: uuid(),
             title: data.title,
             shortDescription: data.shortDescription,
             content: data.content,
@@ -15,10 +16,15 @@ export class PostRepository {
 
         posts.push(post);
 
-        return { item: post };
+        return {
+            item: {
+                ...post,
+                blogName: BlogRepository.getBlog(post.blogId)?.item.name,
+            },
+        };
     }
 
-    static deletePost(id: number) {
+    static deletePost(id: string) {
         const post = posts.find((item) => item.id === id);
 
         if (!post) {
@@ -37,20 +43,25 @@ export class PostRepository {
     }
 
     static getAll() {
-        return posts;
+        return posts.map((post) => ({
+            ...post,
+            blogName: BlogRepository.getBlog(post.blogId)?.item.name,
+        }));
     }
 
-    static getPost(id: number) {
+    static getPost(id: string) {
         const post = posts.find((item) => item.id === id);
 
         if (!post) {
             return;
         }
 
-        return { item: post };
+        const blog = BlogRepository.getBlog(post.blogId);
+
+        return { item: { ...post, blogName: blog?.item.name } };
     }
 
-    static updatePost(id: number, data: Post) {
+    static updatePost(id: string, data: Post) {
         const post = posts.find((item) => item.id === id);
 
         if (!post) {
@@ -67,6 +78,11 @@ export class PostRepository {
 
         posts = posts.map((post) => (post.id === id ? updated : post));
 
-        return { item: post };
+        return {
+            item: {
+                ...post,
+                blogName: BlogRepository.getBlog(post.blogId)?.item.name,
+            },
+        };
     }
 }
