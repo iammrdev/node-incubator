@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { PostService } from './post.service';
 import { Post } from './post.types';
-import { PostValidator } from './post.validator';
+// import { PostValidator } from './post.validator';
 
 const getPosts = async (_req: Request, res: Response) => {
     const posts = await PostService.getAll();
@@ -39,12 +39,12 @@ const deletePost = async (req: Request, res: Response) => {
 const createPost = async (req: Request, res: Response) => {
     const data: Omit<Post, 'id'> = req.body;
 
-    const errors = PostValidator.validateData(data);
+    // const errors = PostValidator.validateData(data);
 
-    if (errors.length) {
-        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-        return;
-    }
+    // if (errors.length) {
+    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
+    //     return;
+    // }
 
     const result = await PostService.create(data);
 
@@ -55,12 +55,12 @@ const updatePost = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const data: Post = req.body;
 
-    const errors = PostValidator.validateData(data);
+    // const errors = PostValidator.validateData(data);
 
-    if (errors.length) {
-        res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
-        return;
-    }
+    // if (errors.length) {
+    //     res.status(StatusCodes.BAD_REQUEST).send({ errorsMessages: errors });
+    //     return;
+    // }
 
     const result = await PostService.updateById(id, data);
 
