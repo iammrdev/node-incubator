@@ -16,8 +16,7 @@ const getPost = async (req: Request, res: Response) => {
     const result = await PostService.getById(id);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.status(StatusCodes.OK).send(result.item);
@@ -29,8 +28,7 @@ const deletePost = async (req: Request, res: Response) => {
     const result = await PostService.deleteById(id);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.sendStatus(StatusCodes.NO_CONTENT);
@@ -49,10 +47,9 @@ const createPost = async (req: Request, res: Response) => {
     })(req);
 
     if (!errors.isEmpty()) {
-        res.status(StatusCodes.BAD_REQUEST).send({
+        return res.status(StatusCodes.BAD_REQUEST).send({
             errorsMessages: errors.array({ onlyFirstError: true }),
         });
-        return;
     }
 
     const result = await PostService.create(data);
@@ -74,17 +71,15 @@ const updatePost = async (req: Request, res: Response) => {
     })(req);
 
     if (!errors.isEmpty()) {
-        res.status(StatusCodes.BAD_REQUEST).send({
+        return res.status(StatusCodes.BAD_REQUEST).send({
             errorsMessages: errors.array({ onlyFirstError: true }),
         });
-        return;
     }
 
     const result = await PostService.updateById(id, data);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.sendStatus(StatusCodes.NO_CONTENT);

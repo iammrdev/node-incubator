@@ -16,8 +16,7 @@ const getBlog = async (req: Request, res: Response) => {
     const result = await BlogService.getById(id);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.status(StatusCodes.OK).send(result.item);
@@ -29,8 +28,7 @@ const deleteBlog = async (req: Request, res: Response) => {
     const result = await BlogService.deleteById(id);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.sendStatus(StatusCodes.NO_CONTENT);
@@ -49,10 +47,9 @@ const createBlog = async (req: Request, res: Response) => {
     })(req);
 
     if (!errors.isEmpty()) {
-        res.status(StatusCodes.BAD_REQUEST).send({
+        return res.status(StatusCodes.BAD_REQUEST).send({
             errorsMessages: errors.array({ onlyFirstError: true }),
         });
-        return;
     }
 
     const result = await BlogService.create(data);
@@ -74,17 +71,15 @@ const updateBlog = async (req: Request, res: Response) => {
     })(req);
 
     if (!errors.isEmpty()) {
-        res.status(StatusCodes.BAD_REQUEST).send({
+        return res.status(StatusCodes.BAD_REQUEST).send({
             errorsMessages: errors.array({ onlyFirstError: true }),
         });
-        return;
     }
 
     const result = await BlogService.updateById(id, data);
 
     if (!result) {
-        res.sendStatus(StatusCodes.NOT_FOUND);
-        return;
+        return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
     return res.sendStatus(StatusCodes.NO_CONTENT);
