@@ -36,15 +36,12 @@ export const createPostSchema = checkSchema({
         isLength: {
             options: { max: 100 },
         },
+        isUUID: {},
         custom: {
             options: (value: string) => {
                 const blog = BlogRepository.getBlog(value);
 
-                if (!blog) {
-                    return Promise.reject('Invalid blogId');
-                }
-
-                return Promise.resolve();
+                return blog ? Promise.resolve() : Promise.reject('Invalid blogId');
             },
         },
     },
