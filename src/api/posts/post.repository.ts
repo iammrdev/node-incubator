@@ -1,68 +1,55 @@
+import { ObjectId } from 'mongodb';
 import { v4 as uuid } from 'uuid';
+import { postsCollection } from '../../lib/db';
 import { BlogRepository } from '../blogs/blog.repository';
 import { Post } from './post.types';
 
 let posts: Post[] = [];
 
 export class PostRepository {
-    static createPost(data: Omit<Post, 'id'>) {
-        const post: Post = {
-            id: uuid(),
+    static async createPost(data: Omit<Post, 'id'>) {
+        const post = {
             title: data.title,
             shortDescription: data.shortDescription,
             content: data.content,
             blogId: data.blogId,
         };
 
-        posts.push(post);
+        const item = await postsCollection.insertOne(post);
 
-        return {
-            item: {
-                ...post,
-                blogName: BlogRepository.getBlog(post.blogId)?.item.name,
-            },
-        };
+        return { item: { ...post, id: item.insertedId } };
     }
 
-    static deletePost(id: string) {
-        const post = posts.find((item) => item.id === id);
-
-        if (!post) {
-            return;
-        }
-
-        posts = posts.filter((item) => item.id !== id);
+    static async deletePost(id: string) {
+        await postsCollection.deleteOne({ _id: new ObjectId(id) });
 
         return { id };
     }
 
-    static deleteAll() {
-        posts = [];
+    static async deleteAll() {
+        await postsCollection.deleteMany({});
 
-        return posts;
+        return [];
     }
 
-    static getAll() {
-        return posts.map((post) => ({
-            ...post,
-            blogName: BlogRepository.getBlog(post.blogId)?.item.name,
-        }));
+    static async getAll() {
+        const posts = await postsCollection.find({});
+
+        return posts.toArray();
     }
 
-    static getPost(id: string) {
-        const post = posts.find((item) => item.id === id);
+    static async getPost(id: string) {
+        const post = await postsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!post) {
             return;
         }
 
-        const blog = BlogRepository.getBlog(post.blogId);
-
-        return { item: { ...post, blogName: blog?.item.name } };
+        return { item: post };
     }
 
-    static updatePost(id: string, data: Post) {
-        const post = posts.find((item) => item.id === id);
+    static async updatePost(id: string, data: Post) {
+        const post = await postsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!post) {
             return;
@@ -76,13 +63,8 @@ export class PostRepository {
             blogId: data.blogId,
         };
 
-        posts = posts.map((post) => (post.id === id ? updated : post));
+        await postsCollection.updateOne({ _id: new ObjectId(id) }, updated);
 
-        return {
-            item: {
-                ...post,
-                blogName: BlogRepository.getBlog(post.blogId)?.item.name,
-            },
-        };
+        return { item: updated };
     }
 }
