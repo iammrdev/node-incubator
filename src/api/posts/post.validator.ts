@@ -38,8 +38,8 @@ export const createPostSchema = checkSchema({
         },
         isUUID: {},
         custom: {
-            options: (value: string) => {
-                const blog = BlogRepository.getBlog(value);
+            options: async (value: string) => {
+                const blog = await BlogRepository.getBlog(value);
 
                 return blog ? Promise.resolve() : Promise.reject('Invalid blogId');
             },
