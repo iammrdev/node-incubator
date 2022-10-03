@@ -9,15 +9,15 @@ const getAll = async () => {
     return VideoRepository.getVideos();
 };
 
-const updateById = async (id: number, data: Video) => {
+const updateById = async (id: string, data: Video) => {
     return VideoRepository.updateVideo(id, data);
 };
 
-const deleteById = async (id: number) => {
+const deleteById = async (id: string) => {
     return VideoRepository.deleteVideo(id);
 };
 
-const getById = async (id: number) => {
+const getById = async (id: string) => {
     return VideoRepository.getVideo(id);
 };
 

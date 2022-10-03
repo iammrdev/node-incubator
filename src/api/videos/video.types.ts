@@ -1,5 +1,5 @@
 export interface Video {
-    id: number;
+    id?: number;
     title: string;
     author: string;
     canBeDownloaded?: boolean;

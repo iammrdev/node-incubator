@@ -11,7 +11,7 @@ const getVideos = async (_req: Request, res: Response) => {
 };
 
 const getVideo = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await VideoService.getById(id);
 
@@ -24,7 +24,7 @@ const getVideo = async (req: Request, res: Response) => {
 };
 
 const deleteVideo = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     const result = await VideoService.deleteById(id);
 
@@ -52,7 +52,7 @@ const createVideo = async (req: Request, res: Response) => {
 };
 
 const updateVideo = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
+    const id = req.params.id;
     const data: Video = req.body;
 
     const errors = VideoValidator.validateData(data);

@@ -1,53 +1,46 @@
+import { ObjectId } from 'mongodb';
+import { client, videosCollection } from '../../lib/db';
 import { Video } from './video.types';
 
-let id: number = 0;
-let videos: Video[] = [];
-
 export class VideoRepository {
-    static createVideo(data: Omit<Video, 'id'>) {
+    static async createVideo(data: Omit<Video, 'id'>) {
         const publicationDate = new Date();
         publicationDate.setDate(publicationDate.getDate() + 1);
 
         const video: Video = {
-            id: ++id,
             title: data.title,
             author: data.author,
             canBeDownloaded: data.canBeDownloaded ?? false,
             minAgeRestriction: data.minAgeRestriction || null,
-            createdAt: new Date(),
             publicationDate,
             availableResolutions: data.availableResolutions || [],
         };
 
-        videos.push(video);
+        const item = await videosCollection.insertOne(video);
 
-        return { item: video };
+        return { item: { ...video, id: item.insertedId } };
     }
 
-    static deleteVideo(id: number) {
-        const video = videos.find((item) => item.id === id);
-
-        if (!video) {
-            return;
-        }
-
-        videos = videos.filter((item) => item.id !== id);
+    static async deleteVideo(id: string) {
+        await videosCollection.deleteOne({ _id: new ObjectId(id) });
 
         return { id };
     }
 
-    static deleteAll() {
-        videos = [];
+    static async deleteAll() {
+        await videosCollection.deleteMany({});
 
-        return videos;
+        return [];
     }
 
-    static getVideos() {
-        return videos;
+    static async getVideos(): Promise<Video[]> {
+        const videos = await videosCollection.find({});
+
+        return videos.toArray();
     }
 
-    static getVideo(id: number) {
-        const video = videos.find((item) => item.id === id);
+    static async getVideo(id: string) {
+        const video = await videosCollection.findOne({ _id: new ObjectId(id) });
 
         if (!video) {
             return;
@@ -56,26 +49,24 @@ export class VideoRepository {
         return { item: video };
     }
 
-    static updateVideo(id: number, data: Video) {
-        const video = videos.find((item) => item.id === id);
+    static async updateVideo(id: string, data: Video) {
+        const video = await videosCollection.findOne({ _id: new ObjectId(id) });
 
         if (!video) {
             return;
         }
 
         const updated: Video = {
-            id,
             title: data.title,
             author: data.author,
             canBeDownloaded: data.canBeDownloaded,
             minAgeRestriction: data.minAgeRestriction,
-            createdAt: video.createdAt,
             publicationDate: data.publicationDate,
             availableResolutions: data.availableResolutions,
         };
 
-        videos = videos.map((video) => (video.id === id ? updated : video));
+        await videosCollection.updateOne({ _id: new ObjectId(id) }, updated);
 
-        return { item: video };
+        return { item: updated };
     }
 }
