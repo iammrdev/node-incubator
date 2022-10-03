@@ -1,5 +1,5 @@
 export interface Blog {
-    id: string;
+    id?: string;
     name: string;
     youtubeUrl: string;
 }

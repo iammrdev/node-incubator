@@ -1,45 +1,39 @@
-import { v4 as uuid } from 'uuid';
+import { ObjectId } from 'mongodb';
+import { blogsCollection } from '../../lib/db';
 import { Blog } from './blog.types';
 
-let blogs: Blog[] = [];
-
 export class BlogRepository {
-    static createBlog(data: Omit<Blog, 'id'>) {
-        const blog: Blog = {
-            id: uuid(),
+    static async createBlog(data: Omit<Blog, 'id'>) {
+        const blog = {
             name: data.name,
             youtubeUrl: data.youtubeUrl,
         };
 
-        blogs.push(blog);
+        const item = await blogsCollection.insertOne(blog);
 
-        return { item: blog };
+        return { item: { ...blog, id: item.insertedId } };
     }
 
-    static deleteBlog(id: string) {
-        const blog = blogs.find((item) => item.id === id);
-
-        if (!blog) {
-            return;
-        }
-
-        blogs = blogs.filter((item) => item.id !== id);
+    static async deleteBlog(id: string) {
+        await blogsCollection.deleteOne({ _id: new ObjectId(id) });
 
         return { id };
     }
 
-    static deleteAll() {
-        blogs = [];
+    static async deleteAll() {
+        await blogsCollection.deleteMany({});
 
-        return blogs;
+        return [];
     }
 
-    static getAll() {
-        return blogs;
+    static async getAll() {
+        const blogs = await blogsCollection.find({});
+
+        return blogs.toArray();
     }
 
-    static getBlog(id: string) {
-        const blog = blogs.find((item) => item.id === id);
+    static async getBlog(id: string) {
+        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!blog) {
             return;
@@ -48,8 +42,8 @@ export class BlogRepository {
         return { item: blog };
     }
 
-    static updateBlog(id: string, data: Blog) {
-        const blog = blogs.find((item) => item.id === id);
+    static async updateBlog(id: string, data: Blog) {
+        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!blog) {
             return;
@@ -61,8 +55,8 @@ export class BlogRepository {
             youtubeUrl: data.youtubeUrl,
         };
 
-        blogs = blogs.map((blog) => (blog.id === id ? updated : blog));
+        await blogsCollection.updateOne({ _id: new ObjectId(id) }, updated);
 
-        return { item: blog };
+        return { item: updated };
     }
 }
