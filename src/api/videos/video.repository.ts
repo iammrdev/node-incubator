@@ -1,6 +1,19 @@
-import { ObjectId } from 'mongodb';
-import { client, videosCollection } from '../../lib/db';
+import { ObjectId, WithId } from 'mongodb';
+import { videosCollection } from '../../lib/db';
 import { Video } from './video.types';
+
+const createVideoDto = (video: WithId<Video>): Video => {
+    return {
+        id: video._id.toString(),
+        title: video.title,
+        author: video.author,
+        canBeDownloaded: video.canBeDownloaded ?? false,
+        minAgeRestriction: video.minAgeRestriction || null,
+        publicationDate: video.publicationDate,
+        availableResolutions: video.availableResolutions || [],
+        createdAt: video._id.getTimestamp(),
+    };
+};
 
 export class VideoRepository {
     static async createVideo(data: Omit<Video, 'id'>) {
@@ -18,11 +31,17 @@ export class VideoRepository {
 
         const item = await videosCollection.insertOne(video);
 
-        return { item: { ...video, id: item.insertedId } };
+        return VideoRepository.getVideo(item.insertedId.toString());
     }
 
     static async deleteVideo(id: string) {
-        await videosCollection.deleteOne({ _id: new ObjectId(id) });
+        const video = await videosCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!video) {
+            return;
+        }
+
+        await videosCollection.deleteOne({ _id: video._id });
 
         return { id };
     }
@@ -36,7 +55,7 @@ export class VideoRepository {
     static async getVideos(): Promise<Video[]> {
         const videos = await videosCollection.find({});
 
-        return videos.toArray();
+        return videos.map(createVideoDto).toArray();
     }
 
     static async getVideo(id: string) {
@@ -46,7 +65,7 @@ export class VideoRepository {
             return;
         }
 
-        return { item: video };
+        return createVideoDto(video);
     }
 
     static async updateVideo(id: string, data: Video) {
@@ -56,7 +75,7 @@ export class VideoRepository {
             return;
         }
 
-        const updated: Video = {
+        const updated = {
             title: data.title,
             author: data.author,
             canBeDownloaded: data.canBeDownloaded,
@@ -65,8 +84,8 @@ export class VideoRepository {
             availableResolutions: data.availableResolutions,
         };
 
-        await videosCollection.updateOne({ _id: new ObjectId(id) }, updated);
+        await videosCollection.updateOne({ _id: video._id }, { $set: updated });
 
-        return { item: updated };
+        return VideoRepository.getVideo(id);
     }
 }

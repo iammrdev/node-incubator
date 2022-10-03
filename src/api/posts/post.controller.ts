@@ -19,7 +19,7 @@ const getPost = async (req: Request, res: Response) => {
         return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
-    return res.status(StatusCodes.OK).send(result.item);
+    return res.status(StatusCodes.OK).send(result);
 };
 
 const deletePost = async (req: Request, res: Response) => {
@@ -54,7 +54,7 @@ const createPost = async (req: Request, res: Response) => {
 
     const result = await PostService.create(data);
 
-    return res.status(StatusCodes.CREATED).send(result.item);
+    return res.status(StatusCodes.CREATED).send(result);
 };
 
 const updatePost = async (req: Request, res: Response) => {

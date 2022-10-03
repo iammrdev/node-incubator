@@ -19,7 +19,7 @@ const getVideo = async (req: Request, res: Response) => {
         return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
-    return res.status(StatusCodes.OK).send(result.item);
+    return res.status(StatusCodes.OK).send(result);
 };
 
 const deleteVideo = async (req: Request, res: Response) => {
@@ -45,7 +45,7 @@ const createVideo = async (req: Request, res: Response) => {
 
     const result = await VideoService.create(data);
 
-    return res.status(StatusCodes.CREATED).send(result.item);
+    return res.status(StatusCodes.CREATED).send(result);
 };
 
 const updateVideo = async (req: Request, res: Response) => {

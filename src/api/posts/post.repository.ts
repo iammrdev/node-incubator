@@ -1,10 +1,20 @@
-import { ObjectId } from 'mongodb';
-import { v4 as uuid } from 'uuid';
+import { DBRef, ObjectId, WithId } from 'mongodb';
 import { postsCollection } from '../../lib/db';
 import { BlogRepository } from '../blogs/blog.repository';
+import { Blog } from '../blogs/blog.types';
 import { Post } from './post.types';
 
-let posts: Post[] = [];
+const createPostDto = (post: WithId<Post>, blog?: Blog): Post => {
+    return {
+        id: post._id.toString(),
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: blog?.name || '',
+        createdAt: post._id.getTimestamp(),
+    };
+};
 
 export class PostRepository {
     static async createPost(data: Omit<Post, 'id'>) {
@@ -17,11 +27,17 @@ export class PostRepository {
 
         const item = await postsCollection.insertOne(post);
 
-        return { item: { ...post, id: item.insertedId } };
+        return PostRepository.getPost(item.insertedId.toString());
     }
 
     static async deletePost(id: string) {
-        await postsCollection.deleteOne({ _id: new ObjectId(id) });
+        const post = await postsCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!post) {
+            return;
+        }
+
+        await postsCollection.deleteOne({ _id: post._id });
 
         return { id };
     }
@@ -33,9 +49,15 @@ export class PostRepository {
     }
 
     static async getAll() {
-        const posts = await postsCollection.find({});
+        const posts = await postsCollection.find().toArray();
+        const blogs = await BlogRepository.getAll();
 
-        return posts.toArray();
+        return posts.map((post) =>
+            createPostDto(
+                post,
+                blogs.find((blog) => blog.id === post.blogId),
+            ),
+        );
     }
 
     static async getPost(id: string) {
@@ -45,7 +67,9 @@ export class PostRepository {
             return;
         }
 
-        return { item: post };
+        const blog = await BlogRepository.getBlog(post.blogId.toString());
+
+        return createPostDto(post, blog);
     }
 
     static async updatePost(id: string, data: Post) {
@@ -56,15 +80,14 @@ export class PostRepository {
         }
 
         const updated: Post = {
-            id,
             title: data.title,
             shortDescription: data.shortDescription,
             content: data.content,
             blogId: data.blogId,
         };
 
-        await postsCollection.updateOne({ _id: new ObjectId(id) }, updated);
+        await postsCollection.updateOne({ _id: post._id }, { $set: updated });
 
-        return { item: updated };
+        return PostRepository.getPost(id);
     }
 }

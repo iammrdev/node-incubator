@@ -1,6 +1,15 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { blogsCollection } from '../../lib/db';
 import { Blog } from './blog.types';
+
+const createBlogDto = (blog: WithId<Blog>): Blog => {
+    return {
+        id: blog._id.toString(),
+        name: blog.name,
+        youtubeUrl: blog.youtubeUrl,
+        createdAt: blog._id.getTimestamp(),
+    };
+};
 
 export class BlogRepository {
     static async createBlog(data: Omit<Blog, 'id'>) {
@@ -11,11 +20,17 @@ export class BlogRepository {
 
         const item = await blogsCollection.insertOne(blog);
 
-        return { item: { ...blog, id: item.insertedId } };
+        return BlogRepository.getBlog(item.insertedId.toString());
     }
 
     static async deleteBlog(id: string) {
-        await blogsCollection.deleteOne({ _id: new ObjectId(id) });
+        const blog = await blogsCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!blog) {
+            return;
+        }
+
+        await blogsCollection.deleteOne({ _id: blog._id });
 
         return { id };
     }
@@ -29,7 +44,7 @@ export class BlogRepository {
     static async getAll() {
         const blogs = await blogsCollection.find({});
 
-        return blogs.toArray();
+        return blogs.map(createBlogDto).toArray();
     }
 
     static async getBlog(id: string) {
@@ -39,7 +54,7 @@ export class BlogRepository {
             return;
         }
 
-        return { item: blog };
+        return createBlogDto(blog);
     }
 
     static async updateBlog(id: string, data: Blog) {
@@ -49,14 +64,13 @@ export class BlogRepository {
             return;
         }
 
-        const updated: Blog = {
-            id,
+        const updated = {
             name: data.name,
             youtubeUrl: data.youtubeUrl,
         };
 
-        await blogsCollection.updateOne({ _id: new ObjectId(id) }, updated);
+        await blogsCollection.updateOne({ _id: blog._id }, { $set: updated });
 
-        return { item: updated };
+        return BlogRepository.getBlog(id);
     }
 }

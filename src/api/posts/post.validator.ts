@@ -36,7 +36,6 @@ export const createPostSchema = checkSchema({
         isLength: {
             options: { max: 100 },
         },
-        isUUID: {},
         custom: {
             options: async (value: string) => {
                 const blog = await BlogRepository.getBlog(value);

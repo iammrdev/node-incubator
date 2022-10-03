@@ -19,7 +19,7 @@ const getBlog = async (req: Request, res: Response) => {
         return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
-    return res.status(StatusCodes.OK).send(result.item);
+    return res.status(StatusCodes.OK).send(result);
 };
 
 const deleteBlog = async (req: Request, res: Response) => {
@@ -54,7 +54,7 @@ const createBlog = async (req: Request, res: Response) => {
 
     const result = await BlogService.create(data);
 
-    return res.status(StatusCodes.CREATED).send(result.item);
+    return res.status(StatusCodes.CREATED).send(result);
 };
 
 const updateBlog = async (req: Request, res: Response) => {
