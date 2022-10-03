@@ -3,6 +3,7 @@ import blogRouter from './api/blogs/blog.router';
 import testingRouter from './api/testing/testing.router';
 import videoRouter from './api/videos/video.router';
 import postRouter from './api/posts/post.router';
+import { runDB } from './lib/db';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -14,6 +15,12 @@ app.use('/videos', videoRouter);
 app.use('/blogs', blogRouter);
 app.use('/posts', postRouter);
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-});
+const init = async () => {
+    await runDB();
+
+    app.listen(port, async () => {
+        console.log(`Example app listening on port ${port}`);
+    });
+};
+
+init();
