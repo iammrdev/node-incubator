@@ -7,3 +7,10 @@ export interface Post {
     blogName?: string;
     createdAt?: Date;
 }
+
+export interface GetPostsByBlogIdParams {
+    pageNumber: number;
+    pageSize: number;
+    sortBy: string;
+    sortDirection: 'asc' | 'desc'
+}

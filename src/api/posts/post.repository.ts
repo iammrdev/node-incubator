@@ -2,7 +2,7 @@ import { DBRef, ObjectId, WithId } from 'mongodb';
 import { postsCollection } from '../../lib/db';
 import { BlogRepository } from '../blogs/blog.repository';
 import { Blog } from '../blogs/blog.types';
-import { Post } from './post.types';
+import { GetPostsByBlogIdParams, Post } from './post.types';
 
 const createPostDto = (post: WithId<Post>, blog?: Blog): Post => {
     return {
@@ -73,8 +73,13 @@ export class PostRepository {
         );
     }
 
-    static async getAllByBlog(blogId: string) {
-        const posts = await postsCollection.find({ blogId }).toArray();
+    static async getAllByBlog(blogId: string, params: GetPostsByBlogIdParams) {
+        const posts = await postsCollection
+            .find({ blogId })
+            .sort({ [params.sortBy]: params.sortDirection === 'asc' ? 1 : -1 })
+            .skip((params.pageNumber - 1) * params.pageSize)
+            .limit(params.pageSize).toArray();
+
         const blogs = await BlogRepository.getAll();
 
         return posts.map((post) =>

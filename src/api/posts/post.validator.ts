@@ -45,3 +45,30 @@ export const createPostSchema = checkSchema({
         },
     },
 });
+
+export const createPostByBlogSchema = checkSchema({
+    title: {
+        in: ['body'],
+        trim: {},
+        notEmpty: {},
+        isLength: {
+            options: { max: 30 },
+        },
+    },
+    shortDescription: {
+        in: ['body'],
+        trim: {},
+        notEmpty: {},
+        isLength: {
+            options: { max: 100 },
+        },
+    },
+    content: {
+        in: ['body'],
+        trim: {},
+        notEmpty: {},
+        isLength: {
+            options: { max: 1000 },
+        },
+    }
+});

@@ -1,5 +1,5 @@
 import { PostRepository } from './post.repository';
-import { Post } from './post.types';
+import { GetPostsByBlogIdParams, Post } from './post.types';
 
 const create = async (data: Omit<Post, 'id'>) => {
     return PostRepository.createPost(data);
@@ -13,8 +13,8 @@ const getAll = async () => {
     return PostRepository.getAll();
 };
 
-const getAllByBlog = async (blogId: string) => {
-    return PostRepository.getAllByBlog(blogId);
+const getAllByBlog = async (blogId: string, params: GetPostsByBlogIdParams) => {
+    return PostRepository.getAllByBlog(blogId, params);
 };
 
 const updateById = async (id: string, data: Post) => {

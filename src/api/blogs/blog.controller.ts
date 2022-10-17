@@ -89,13 +89,24 @@ const updateBlog = async (req: Request, res: Response) => {
 
 const getPostsByBlog = async (req: Request, res: Response) => {
     const id = req.params.id;
-    const blogs = await PostService.getAllByBlog(id);
+
+    console.log({ id, query: req.query })
+
+    const blogs = await PostService.getAllByBlog(id, {
+        pageNumber: Number(req.query.pageNumber),
+        pageSize: Number(req.query.pageSize),
+        sortBy: req.query.sortBy as string,
+        sortDirection: req.query.sortDirection as 'asc' | 'desc',
+    });
+
 
     return res.status(StatusCodes.OK).send(blogs);
 };
 
 const createPostByBlog = async (req: Request, res: Response) => {
+    const id = req.params.id;
     const data: Omit<Post, 'id'> = req.body;
+
 
     const errors = validationResult.withDefaults({
         formatter: (error) => {

@@ -17,7 +17,7 @@ export const postsCollection = db.collection<Post>('posts');
 export const runDB = async () => {
     try {
         await client.connect();
-        // await client.db("videos").command({ping: 1})
+        // await client.db("videos").command({ ping: 1 })
 
         console.log('Connected successfully to mongo server');
     } catch (error) {

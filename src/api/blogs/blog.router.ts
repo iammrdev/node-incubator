@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { basicAuth } from '../auth/basic';
+import { createPostByBlogSchema } from '../posts/post.validator';
 import { BlogController } from './blog.controller';
 import { createBlogSchema } from './blog.validator';
 
@@ -15,6 +16,6 @@ router
 router
     .route('/:id/posts')
     .get(BlogController.getPostsByBlog)
-    .post(basicAuth, createBlogSchema, BlogController.createPostByBlog)
+    .post(basicAuth, createPostByBlogSchema, BlogController.createPostByBlog)
 
 export default router;
