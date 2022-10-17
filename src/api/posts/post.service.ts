@@ -5,6 +5,10 @@ const create = async (data: Omit<Post, 'id'>) => {
     return PostRepository.createPost(data);
 };
 
+const createPostByBlog = async (blogId: string, data: Omit<Post, 'id'>) => {
+    return PostRepository.createPostByBlog(blogId, data);
+};
+
 const getAll = async () => {
     return PostRepository.getAll();
 };
@@ -27,9 +31,10 @@ const getById = async (id: string) => {
 
 export const PostService = {
     create,
+    createPostByBlog,
     getAll,
+    getAllByBlog,
     updateById,
     deleteById,
     getById,
-    getAllByBlog
 };

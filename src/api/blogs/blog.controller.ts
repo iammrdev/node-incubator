@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import { PostService } from '../posts/post.service';
+import { Post } from '../posts/post.types';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.types';
 
@@ -93,6 +94,29 @@ const getPostsByBlog = async (req: Request, res: Response) => {
     return res.status(StatusCodes.OK).send(blogs);
 };
 
+const createPostByBlog = async (req: Request, res: Response) => {
+    const data: Omit<Post, 'id'> = req.body;
+
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const result = await PostService.create(data);
+
+    return res.status(StatusCodes.CREATED).send(result);
+};
+
 export const BlogController = {
     getBlogs,
     getBlog,
@@ -100,5 +124,6 @@ export const BlogController = {
     updateBlog,
     createBlog,
     getPostsByBlog,
+    createPostByBlog
 
 };

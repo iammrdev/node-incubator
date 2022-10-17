@@ -15,5 +15,6 @@ router
 router
     .route('/:id/posts')
     .get(BlogController.getPostsByBlog)
+    .post(basicAuth, createBlogSchema, BlogController.createPostByBlog)
 
 export default router;

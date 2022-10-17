@@ -30,6 +30,19 @@ export class PostRepository {
         return PostRepository.getPost(item.insertedId.toString());
     }
 
+    static async createPostByBlog(blogId: string, data: Omit<Post, 'id'>) {
+        const post = {
+            title: data.title,
+            shortDescription: data.shortDescription,
+            content: data.content,
+            blogId,
+        };
+
+        const item = await postsCollection.insertOne(post);
+
+        return PostRepository.getPost(item.insertedId.toString());
+    }
+
     static async deletePost(id: string) {
         const post = await postsCollection.findOne({ _id: new ObjectId(id) });
 
