@@ -2,7 +2,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { blogsCollection } from '../../lib/db';
 import { Blog } from './blog.types';
 
-const createBlogDto = (blog: WithId<Blog>): Blog => {
+const getBlogDto = (blog: WithId<Blog>): Blog => {
     return {
         id: blog._id.toString(),
         name: blog.name,
@@ -12,12 +12,7 @@ const createBlogDto = (blog: WithId<Blog>): Blog => {
 };
 
 export class BlogRepository {
-    static async createBlog(data: Omit<Blog, 'id'>) {
-        const blog = {
-            name: data.name,
-            youtubeUrl: data.youtubeUrl,
-        };
-
+    static async createBlog(blog: Omit<Blog, 'id'>) {
         const item = await blogsCollection.insertOne(blog);
 
         return BlogRepository.getBlog(item.insertedId.toString());
@@ -44,7 +39,7 @@ export class BlogRepository {
     static async getAll() {
         const blogs = await blogsCollection.find({});
 
-        return blogs.map(createBlogDto).toArray();
+        return blogs.map(getBlogDto).toArray();
     }
 
     static async getBlog(id: string) {
@@ -54,7 +49,7 @@ export class BlogRepository {
             return;
         }
 
-        return createBlogDto(blog);
+        return getBlogDto(blog);
     }
 
     static async updateBlog(id: string, data: Blog) {

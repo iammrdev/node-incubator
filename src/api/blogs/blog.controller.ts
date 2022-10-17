@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
+import { PostService } from '../posts/post.service';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.types';
 
@@ -85,10 +86,19 @@ const updateBlog = async (req: Request, res: Response) => {
     return res.sendStatus(StatusCodes.NO_CONTENT);
 };
 
+const getPostsByBlog = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const blogs = await PostService.getAllByBlog(id);
+
+    return res.status(StatusCodes.OK).send(blogs);
+};
+
 export const BlogController = {
     getBlogs,
     getBlog,
     deleteBlog,
     updateBlog,
     createBlog,
+    getPostsByBlog,
+
 };

@@ -9,6 +9,10 @@ const getAll = async () => {
     return PostRepository.getAll();
 };
 
+const getAllByBlog = async (blogId: string) => {
+    return PostRepository.getAllByBlog(blogId);
+};
+
 const updateById = async (id: string, data: Post) => {
     return PostRepository.updatePost(id, data);
 };
@@ -27,4 +31,5 @@ export const PostService = {
     updateById,
     deleteById,
     getById,
+    getAllByBlog
 };

@@ -12,4 +12,8 @@ router
     .put(basicAuth, createBlogSchema, BlogController.updateBlog)
     .delete(basicAuth, BlogController.deleteBlog);
 
+router
+    .route('/:id/posts')
+    .get(BlogController.getPostsByBlog)
+
 export default router;

@@ -60,6 +60,19 @@ export class PostRepository {
         );
     }
 
+    static async getAllByBlog(blogId: string) {
+        const posts = await postsCollection.find({ blogId }).toArray();
+        const blogs = await BlogRepository.getAll();
+
+        return posts.map((post) =>
+            createPostDto(
+                post,
+                blogs.find((blog) => blog.id === blogId),
+            ),
+        );
+    }
+
+
     static async getPost(id: string) {
         const post = await postsCollection.findOne({ _id: new ObjectId(id) });
 

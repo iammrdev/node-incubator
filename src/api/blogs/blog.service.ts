@@ -2,7 +2,12 @@ import { BlogRepository } from './blog.repository';
 import { Blog } from './blog.types';
 
 const create = async (data: Omit<Blog, 'id'>) => {
-    return BlogRepository.createBlog(data);
+    const blog = {
+        name: data.name,
+        youtubeUrl: data.youtubeUrl,
+    };
+
+    return BlogRepository.createBlog(blog);
 };
 
 const getAll = async () => {
