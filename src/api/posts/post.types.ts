@@ -9,8 +9,8 @@ export interface Post {
 }
 
 export interface GetPostsByBlogIdParams {
-    pageNumber: number;
-    pageSize: number;
+    pageNumber?: number;
+    pageSize?: number;
     sortBy: string;
-    sortDirection: 'asc' | 'desc'
+    sortDirection?: 'asc' | 'desc'
 }

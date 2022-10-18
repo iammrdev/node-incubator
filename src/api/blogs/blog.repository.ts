@@ -1,8 +1,10 @@
 import { ObjectId, WithId } from 'mongodb';
+import { title } from 'process';
 import { blogsCollection } from '../../lib/db';
+import { GetPostsByBlogIdParams } from '../posts/post.types';
 import { Blog } from './blog.types';
 
-const getBlogDto = (blog: WithId<Blog>): Blog => {
+export const getBlogDto = (blog: WithId<Blog>): Blog => {
     return {
         id: blog._id.toString(),
         name: blog.name,
@@ -36,10 +38,23 @@ export class BlogRepository {
         return [];
     }
 
-    static async getAll() {
-        const blogs = await blogsCollection.find({});
+    static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'title' }) {
+        const totalCount = await blogsCollection.count({})
+        const pageSize = params.pageSize || 10;
+        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
+        const blogs = await blogsCollection
+            .find({})
+            .sort({ [params.sortBy]: params.sortDirection === 'asc' ? 1 : -1 })
+            .skip(skip)
+            .limit(pageSize || totalCount).toArray();
 
-        return blogs.map(getBlogDto).toArray();
+        return {
+            page: params.pageNumber || 1,
+            pageSize: pageSize || totalCount,
+            pagesCount: pageSize ? Math.ceil(totalCount / pageSize) : 1,
+            totalCount,
+            items: blogs.map(getBlogDto)
+        }
     }
 
     static async getBlog(id: string) {

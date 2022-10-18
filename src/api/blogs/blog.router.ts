@@ -2,11 +2,12 @@ import { Router } from 'express';
 import { basicAuth } from '../auth/basic';
 import { createPostByBlogSchema } from '../posts/post.validator';
 import { BlogController } from './blog.controller';
-import { createBlogSchema } from './blog.validator';
+import { createBlogSchema, getBlogSchema } from './blog.validator';
 
 const router = Router();
 
 router.route('/').get(BlogController.getBlogs).post(basicAuth, createBlogSchema, BlogController.createBlog);
+
 router
     .route('/:id')
     .get(BlogController.getBlog)
@@ -15,7 +16,7 @@ router
 
 router
     .route('/:id/posts')
-    .get(BlogController.getPostsByBlog)
-    .post(basicAuth, createPostByBlogSchema, BlogController.createPostByBlog)
+    .get(getBlogSchema, BlogController.getPostsByBlog)
+    .post(basicAuth, getBlogSchema, createPostByBlogSchema, BlogController.createPostByBlog)
 
 export default router;

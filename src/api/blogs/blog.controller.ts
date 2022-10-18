@@ -6,8 +6,13 @@ import { Post } from '../posts/post.types';
 import { BlogService } from './blog.service';
 import { Blog } from './blog.types';
 
-const getBlogs = async (_req: Request, res: Response) => {
-    const blogs = await BlogService.getAll();
+const getBlogs = async (req: Request, res: Response) => {
+    const blogs = await BlogService.getAll({
+        pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+        sortBy: req.query.sortBy as string,
+        sortDirection: req.query.sortDirection as 'asc' | 'desc',
+    });
 
     return res.status(StatusCodes.OK).send(blogs);
 };
@@ -88,13 +93,32 @@ const updateBlog = async (req: Request, res: Response) => {
 };
 
 const getPostsByBlog = async (req: Request, res: Response) => {
-    const id = req.params.id;
+    const id = req.params.id
 
-    console.log({ id, query: req.query })
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const result = await BlogService.getById(id);
+
+    if (!result) {
+        return res.sendStatus(StatusCodes.NOT_FOUND);
+    }
 
     const blogs = await PostService.getAllByBlog(id, {
-        pageNumber: Number(req.query.pageNumber),
-        pageSize: Number(req.query.pageSize),
+        pageNumber: Number(req.query.pageNumber) || 1,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10,
         sortBy: req.query.sortBy as string,
         sortDirection: req.query.sortDirection as 'asc' | 'desc',
     });
@@ -123,7 +147,13 @@ const createPostByBlog = async (req: Request, res: Response) => {
         });
     }
 
-    const result = await PostService.create(data);
+    const result2 = await BlogService.getById(id);
+
+    if (!result2) {
+        return res.sendStatus(StatusCodes.NOT_FOUND);
+    }
+
+    const result = await PostService.createPostByBlog(id, data);
 
     return res.status(StatusCodes.CREATED).send(result);
 };

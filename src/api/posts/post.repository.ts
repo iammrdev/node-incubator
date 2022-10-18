@@ -1,6 +1,6 @@
 import { DBRef, ObjectId, WithId } from 'mongodb';
-import { postsCollection } from '../../lib/db';
-import { BlogRepository } from '../blogs/blog.repository';
+import { blogsCollection, postsCollection } from '../../lib/db';
+import { BlogRepository, getBlogDto } from '../blogs/blog.repository';
 import { Blog } from '../blogs/blog.types';
 import { GetPostsByBlogIdParams, Post } from './post.types';
 
@@ -61,33 +61,57 @@ export class PostRepository {
         return [];
     }
 
-    static async getAll() {
-        const posts = await postsCollection.find().toArray();
-        const blogs = await BlogRepository.getAll();
+    static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'title' }) {
+        const totalCount = await postsCollection.count({})
+        const pageSize = params.pageSize || 10;
+        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
+        const posts = await postsCollection
+            .find({})
+            .sort({ [params.sortBy]: params.sortDirection === 'asc' ? 1 : -1 })
+            .skip(skip)
+            .limit(pageSize || totalCount).toArray();
 
-        return posts.map((post) =>
-            createPostDto(
-                post,
-                blogs.find((blog) => blog.id === post.blogId),
-            ),
-        );
+        const blogs = await blogsCollection.find({}).toArray()
+
+
+        return {
+            page: params.pageNumber || 1,
+            pageSize: pageSize,
+            pagesCount: Math.ceil(totalCount / pageSize),
+            totalCount,
+            items: posts.map((post) =>
+                createPostDto(
+                    post,
+                    blogs.map(getBlogDto).find((blog) => blog.id === post.blogId),
+                ),
+            )
+        };
     }
 
     static async getAllByBlog(blogId: string, params: GetPostsByBlogIdParams) {
+        const totalCount = await postsCollection.count({ blogId })
+        const pageSize = params.pageSize || 10;
+        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
         const posts = await postsCollection
             .find({ blogId })
             .sort({ [params.sortBy]: params.sortDirection === 'asc' ? 1 : -1 })
-            .skip((params.pageNumber - 1) * params.pageSize)
-            .limit(params.pageSize).toArray();
+            .skip(skip)
+            .limit(pageSize || totalCount).toArray();
 
-        const blogs = await BlogRepository.getAll();
+        const blogs = await blogsCollection.find({}).toArray()
 
-        return posts.map((post) =>
-            createPostDto(
-                post,
-                blogs.find((blog) => blog.id === blogId),
-            ),
-        );
+        return {
+            page: params.pageNumber || 1,
+            pageSize: pageSize,
+            pagesCount: Math.ceil(totalCount / pageSize),
+            totalCount,
+            items: posts.map((post) =>
+                createPostDto(
+                    post,
+                    blogs.map(getBlogDto).find((blog) => blog.id === blogId),
+                ),
+            )
+        };
     }
 
 
