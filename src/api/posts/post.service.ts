@@ -9,8 +9,8 @@ const createPostByBlog = async (blogId: string, data: Omit<Post, 'id'>) => {
     return PostRepository.createPostByBlog(blogId, data);
 };
 
-const getAll = async () => {
-    return PostRepository.getAll();
+const getAll = async (params: GetPostsByBlogIdParams) => {
+    return PostRepository.getAll(params);
 };
 
 const getAllByBlog = async (blogId: string, params: GetPostsByBlogIdParams) => {

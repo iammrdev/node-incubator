@@ -1,5 +1,4 @@
 import { ObjectId, WithId } from 'mongodb';
-import { title } from 'process';
 import { blogsCollection } from '../../lib/db';
 import { GetPostsByBlogIdParams } from '../posts/post.types';
 import { Blog } from './blog.types';
@@ -9,13 +8,13 @@ export const getBlogDto = (blog: WithId<Blog>): Blog => {
         id: blog._id.toString(),
         name: blog.name,
         youtubeUrl: blog.youtubeUrl,
-        createdAt: blog._id.getTimestamp(),
+        createdAt: blog.createdAt,
     };
 };
 
 export class BlogRepository {
     static async createBlog(blog: Omit<Blog, 'id'>) {
-        const item = await blogsCollection.insertOne(blog);
+        const item = await blogsCollection.insertOne({ ...blog, createdAt: new Date() });
 
         return BlogRepository.getBlog(item.insertedId.toString());
     }
@@ -38,20 +37,20 @@ export class BlogRepository {
         return [];
     }
 
-    static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'title' }) {
-        const totalCount = await blogsCollection.count({})
+    static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'createdAt' }) {
+        const totalCount = await blogsCollection.count({ name: { $regex: params.searchNameTerm, $options: "$i" } })
         const pageSize = params.pageSize || 10;
         const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
         const blogs = await blogsCollection
-            .find({})
-            .sort({ [params.sortBy]: params.sortDirection === 'asc' ? 1 : -1 })
+            .find({ name: { $regex: params.searchNameTerm, $options: "$i" } })
+            .sort({ [params.sortBy || 'createdAt']: params.sortDirection === 'asc' ? 1 : -1 })
             .skip(skip)
             .limit(pageSize || totalCount).toArray();
 
         return {
+            pagesCount: pageSize ? Math.ceil(totalCount / pageSize) : 1,
             page: params.pageNumber || 1,
             pageSize: pageSize || totalCount,
-            pagesCount: pageSize ? Math.ceil(totalCount / pageSize) : 1,
             totalCount,
             items: blogs.map(getBlogDto)
         }

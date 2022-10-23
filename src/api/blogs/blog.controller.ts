@@ -8,6 +8,7 @@ import { Blog } from './blog.types';
 
 const getBlogs = async (req: Request, res: Response) => {
     const blogs = await BlogService.getAll({
+        searchNameTerm: req.query.searchNameTerm as string || '',
         pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
         sortBy: req.query.sortBy as string,

@@ -4,8 +4,13 @@ import { StatusCodes } from 'http-status-codes';
 import { PostService } from './post.service';
 import { Post } from './post.types';
 
-const getPosts = async (_req: Request, res: Response) => {
-    const posts = await PostService.getAll();
+const getPosts = async (req: Request, res: Response) => {
+    const posts = await PostService.getAll({
+        pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
+        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+        sortBy: req.query.sortBy as string,
+        sortDirection: req.query.sortDirection as 'asc' | 'desc',
+    });
 
     return res.status(StatusCodes.OK).send(posts);
 };

@@ -9,6 +9,7 @@ export interface Post {
 }
 
 export interface GetPostsByBlogIdParams {
+    searchNameTerm?: string;
     pageNumber?: number;
     pageSize?: number;
     sortBy: string;
