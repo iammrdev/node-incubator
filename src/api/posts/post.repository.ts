@@ -66,13 +66,8 @@ export class PostRepository {
     static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'createdAt' }) {
         const totalCount = await postsCollection.count({})
         const pageSize = params.pageSize || 10;
-        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
-        const posts = await postsCollection
-            .find({})
-            .sort({ [params.sortBy || 'createdAt']: params.sortDirection === 'asc' ? 1 : -1 })
-            .skip(skip)
-            .limit(pageSize || totalCount).toArray();
-
+        const skip = params.pageNumber && pageSize ? ((params.pageNumber - 1) * pageSize) : 0
+        const posts = await postsCollection.find({}).toArray();
         const blogs = await blogsCollection.find({}).toArray()
 
         return {
@@ -86,15 +81,29 @@ export class PostRepository {
                     blogs.map(getBlogDto).find((blog) => blog.id === post.blogId),
                 ),
             ).sort((post1: Post, post2: Post) => {
-                const sort = params.sortBy as keyof Post;
+                const sort = params.sortBy || 'createdAt' as keyof Post;
 
                 if (params.sortDirection === 'asc') {
                     // @ts-ignore
-                    return post1[sort] > post2[sort] ? -1 : 1;
+                    if (post1[sort] > post2[sort]) {
+                        return 1;
+                        // @ts-ignore
+                    } else if (post1[sort] < post2[sort]) {
+                        return -1
+                    }
+
+                    return 0
                 }
                 // @ts-ignore
-                return post1[sort] > post2[sort] ? -1 : 1;
-            })
+                if (post2[sort] > post1[sort]) {
+                    return 1;
+                    // @ts-ignore
+                } else if (post2[sort] < post1[sort]) {
+                    return -1
+                }
+
+                return 0
+            }).slice(skip, skip + pageSize || totalCount)
         };
     }
 
