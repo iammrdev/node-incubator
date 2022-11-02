@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
 import { Blog } from '../../api/blogs/blog.types';
 import { Post } from '../../api/posts/post.types';
+import { User } from '../../api/users/user.types';
 import { Video } from '../../api/videos/video.types';
 
 const mongoURI =
@@ -13,6 +14,7 @@ const db = client.db('basic-backend');
 export const videosCollection = db.collection<Video>('videos');
 export const blogsCollection = db.collection<Blog>('blogs');
 export const postsCollection = db.collection<Post>('posts');
+export const usersCollection = db.collection<User>('users');
 
 export const runDB = async () => {
     try {
