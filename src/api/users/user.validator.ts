@@ -70,5 +70,5 @@ export const createPostByBlogSchema = checkSchema({
         isLength: {
             options: { max: 1000 },
         },
-    }
+    },
 });

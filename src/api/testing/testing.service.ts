@@ -1,6 +1,6 @@
-import { BlogRepository } from '../blogs/blog.repository';
-import { PostRepository } from '../posts/post.repository';
-import { VideoRepository } from '../videos/video.repository';
+import { BlogRepository } from '../blogs/blog.repository.js';
+import { PostRepository } from '../posts/post.repository.js';
+import { VideoRepository } from '../videos/video.repository.js';
 
 const deleteAllData = async () => {
     VideoRepository.deleteAll();

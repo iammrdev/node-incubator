@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { VideoService } from './video.service';
-import { Video } from './video.types';
-import { VideoValidator } from './video.validator';
+import { VideoService } from './video.service.js';
+import { Video } from './video.types.js';
+import { VideoValidator } from './video.validator.js';
 
 const getVideos = async (_req: Request, res: Response) => {
     const videos = await VideoService.getAll();

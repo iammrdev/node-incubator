@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { basicAuth } from '../auth/basic';
-import { PostController } from './post.controller';
-import { createPostSchema } from './post.validator';
+import { basicAuth } from '../auth/basic.js';
+import { PostController } from './post.controller.js';
+import { createPostSchema } from './post.validator.js';
 
 const router = Router();
 

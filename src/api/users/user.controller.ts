@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { UserService } from './user.service';
-import { UserCreateModel } from './user.types';
+import { UserService } from './user.service.js';
+import { UserCreateModel } from './user.types.js';
 
 
 const getUsers = async (req: Request, res: Response) => {

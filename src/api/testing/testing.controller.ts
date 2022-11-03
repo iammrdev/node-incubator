@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { TestingService } from './testing.service';
+import { TestingService } from './testing.service.js';
 
 const deleteAllData = async (_req: Request, res: Response) => {
     await TestingService.deleteAllData();

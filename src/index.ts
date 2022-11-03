@@ -1,9 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
-import blogRouter from './api/blogs/blog.router';
-import testingRouter from './api/testing/testing.router';
-import videoRouter from './api/videos/video.router';
-import postRouter from './api/posts/post.router';
-import { runDB } from './lib/db';
+import blogRouter from './api/blogs/blog.router.js';
+import testingRouter from './api/testing/testing.router.js';
+import videoRouter from './api/videos/video.router.js';
+import postRouter from './api/posts/post.router.js';
+import { runDB } from './lib/db/index.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -12,7 +13,7 @@ app.use(express.json());
 
 app.use('/testing', testingRouter);
 app.use('/videos', videoRouter);
-app.use('/blogs', blogRouter);
+app.use('/blog', blogRouter);
 app.use('/posts', postRouter);
 
 const init = async () => {

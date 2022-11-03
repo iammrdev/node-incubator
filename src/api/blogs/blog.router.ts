@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { basicAuth } from '../auth/basic';
-import { createPostByBlogSchema } from '../posts/post.validator';
-import { BlogController } from './blog.controller';
-import { createBlogSchema, getBlogSchema } from './blog.validator';
+import { basicAuth } from '../auth/basic.js';
+import { createPostByBlogSchema } from '../posts/post.validator.js';
+import { BlogController } from './blog.controller.js';
+import { createBlogSchema, getBlogSchema } from './blog.validator.js';
 
 const router = Router();
 
@@ -17,6 +17,6 @@ router
 router
     .route('/:id/posts')
     .get(getBlogSchema, BlogController.getPostsByBlog)
-    .post(basicAuth, getBlogSchema, createPostByBlogSchema, BlogController.createPostByBlog)
+    .post(basicAuth, getBlogSchema, createPostByBlogSchema, BlogController.createPostByBlog);
 
 export default router;

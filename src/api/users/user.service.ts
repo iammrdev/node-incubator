@@ -1,5 +1,5 @@
-import { UserRepository } from './user.repository';
-import { GetUsersParams, UserCreateModel } from './user.types';
+import { UserRepository } from './user.repository.js';
+import { GetUsersParams, UserCreateModel } from './user.types.js';
 
 const createUser = async (data: Omit<UserCreateModel, 'id'>) => {
     return UserRepository.createUser(data);

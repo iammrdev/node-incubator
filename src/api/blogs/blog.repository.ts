@@ -1,7 +1,7 @@
 import { ObjectId, WithId } from 'mongodb';
-import { blogsCollection } from '../../lib/db';
-import { GetPostsByBlogIdParams } from '../posts/post.types';
-import { Blog } from './blog.types';
+import { blogsCollection } from '../../lib/db/index.js';
+import { GetPostsByBlogIdParams } from '../posts/post.types.js';
+import { Blog } from './blog.types.js';
 
 export const getBlogDto = (blog: WithId<Blog>): Blog => {
     return {
@@ -38,22 +38,23 @@ export class BlogRepository {
     }
 
     static async getAll(params: GetPostsByBlogIdParams = { sortBy: 'createdAt' }) {
-        const totalCount = await blogsCollection.count({ name: { $regex: params.searchNameTerm, $options: "$i" } })
+        const totalCount = await blogsCollection.count({ name: { $regex: params.searchNameTerm, $options: '$i' } });
         const pageSize = params.pageSize || 10;
-        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0
+        const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0;
         const blogs = await blogsCollection
-            .find({ name: { $regex: params.searchNameTerm, $options: "$i" } })
+            .find({ name: { $regex: params.searchNameTerm, $options: '$i' } })
             .sort({ [params.sortBy || 'createdAt']: params.sortDirection === 'asc' ? 1 : -1 })
             .skip(skip)
-            .limit(pageSize || totalCount).toArray();
+            .limit(pageSize || totalCount)
+            .toArray();
 
         return {
             pagesCount: pageSize ? Math.ceil(totalCount / pageSize) : 1,
             page: params.pageNumber || 1,
             pageSize: pageSize || totalCount,
             totalCount,
-            items: blogs.map(getBlogDto)
-        }
+            items: blogs.map(getBlogDto),
+        };
     }
 
     static async getBlog(id: string) {

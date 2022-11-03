@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { PostService } from './post.service';
-import { Post } from './post.types';
+import { PostService } from './post.service.js';
+import { Post } from './post.types.js';
 
 const getPosts = async (req: Request, res: Response) => {
     const posts = await PostService.getAll({
