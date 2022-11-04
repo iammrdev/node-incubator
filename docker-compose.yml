@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    command: yarn dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    restart: always
+
+  ngrok:
+    image: wernight/ngrok
+    command: "ngrok http -authtoken=${NGROK_TOKEN} --region=eu api:3001"
+    ports:
+      - 4040:4040
+
+
