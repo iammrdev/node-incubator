@@ -1,9 +1,9 @@
 import { ObjectId } from 'mongodb';
 import { usersCollection } from '../../lib/db/index.js';
 
-import { GetUsersParams, User, UserCreateModel, UserResponseModel } from './user.types.js';
+import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } from './user.types.js';
 
-const createUserDto = (user: User): UserResponseModel => {
+const createUserDto = (user: Required<User>): UserResponseModel => {
     return {
         _id: user._id,
         login: user.login,
@@ -14,10 +14,11 @@ const createUserDto = (user: User): UserResponseModel => {
 };
 
 export class UserRepository {
-    static async createUser(data: UserCreateModel) {
+    static async createUser(data: UserRepostoryCreateModel) {
         const user = {
             login: data.login,
-            password: data.password,
+            hash: data.hash,
+            salt: data.salt,
             email: data.email,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -77,6 +78,16 @@ export class UserRepository {
         }
 
         return createUserDto(user);
+    }
+
+    static async getUserByLogin(login: string) {
+        const user = await usersCollection.findOne({ login });
+
+        if (!user) {
+            return;
+        }
+
+        return user;
     }
 
     static async deleteUser(id: string) {

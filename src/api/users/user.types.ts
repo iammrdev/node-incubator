@@ -3,15 +3,33 @@ import { ObjectId } from 'mongodb';
 export interface User {
     _id?: ObjectId;
     login: string;
-    password: string;
+    hash: string;
+    salt: string;
     email: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-export type UserCreateModel = Pick<User, 'login' | 'password' | 'email'>;
+export type UserRepostoryCreateModel = {
+    login: string;
+    hash: string;
+    salt: string;
+    email: string;
+};
 
-export type UserResponseModel = Omit<User, 'password'>;
+export type UserCreateModel = {
+    login: string;
+    password: string;
+    email: string;
+};
+
+export type UserResponseModel = {
+    _id: ObjectId;
+    login: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
 
 export interface GetUsersParams {
     searchNameTerm?: string;

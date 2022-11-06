@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { basicAuth } from '../auth/basic.js';
+import { basicAuth } from '../auth/auth.middlewares.js';
 import { createPostByBlogSchema } from '../posts/post.validator.js';
 import { BlogController } from './blog.controller.js';
 import { createBlogSchema, getBlogSchema } from './blog.validator.js';

@@ -1,74 +1,30 @@
-import { body, checkSchema } from 'express-validator';
-import { BlogRepository } from '../blogs/blog.repository.js';
+import { checkSchema } from 'express-validator';
 
-export const name = body('name').isLength({ max: 15 });
-export const youtubeUrl = body('youtubeUrl').isLength({ max: 100 }).isURL();
-
-export const createPostSchema = checkSchema({
-    title: {
+export const createUserSchema = checkSchema({
+    login: {
         in: ['body'],
         trim: {},
         notEmpty: {},
         isLength: {
-            options: { max: 30 },
+            options: { min: 3, max: 10 },
         },
     },
-    shortDescription: {
+    password: {
         in: ['body'],
         trim: {},
         notEmpty: {},
         isLength: {
-            options: { max: 100 },
+            options: { min: 6, max: 20 },
         },
     },
-    content: {
+    email: {
         in: ['body'],
         trim: {},
         notEmpty: {},
-        isLength: {
-            options: { max: 1000 },
-        },
-    },
-    blogId: {
-        in: ['body'],
-        trim: {},
-        notEmpty: {},
-        isLength: {
-            options: { max: 100 },
-        },
         custom: {
-            options: async (value: string) => {
-                const blog = await BlogRepository.getBlog(value);
-
-                return blog ? Promise.resolve() : Promise.reject('Invalid blogId');
+            options: (value: string) => {
+                return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value);
             },
-        },
-    },
-});
-
-export const createPostByBlogSchema = checkSchema({
-    title: {
-        in: ['body'],
-        trim: {},
-        notEmpty: {},
-        isLength: {
-            options: { max: 30 },
-        },
-    },
-    shortDescription: {
-        in: ['body'],
-        trim: {},
-        notEmpty: {},
-        isLength: {
-            options: { max: 100 },
-        },
-    },
-    content: {
-        in: ['body'],
-        trim: {},
-        notEmpty: {},
-        isLength: {
-            options: { max: 1000 },
         },
     },
 });

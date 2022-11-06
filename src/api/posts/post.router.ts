@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { basicAuth } from '../auth/basic.js';
+import { basicAuth } from '../auth/auth.middlewares.js';
 import { PostController } from './post.controller.js';
 import { createPostSchema } from './post.validator.js';
 
