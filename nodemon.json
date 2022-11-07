@@ -3,5 +3,5 @@
     "src"
   ],
   "ext": "ts, json",
-  "exec": "yarn ts -- --files ./src/index.ts"
+  "exec": "yarn ts --files ./src/index.ts"
 }
