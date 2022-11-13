@@ -5,11 +5,10 @@ import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } fro
 
 const createUserDto = (user: Required<User>): UserResponseModel => {
     return {
-        _id: user._id,
+        id: user._id,
         login: user.login,
         email: user.email,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
     };
 };
 
@@ -30,10 +29,22 @@ export class UserRepository {
     }
 
     static async getAll(params: GetUsersParams = { sortBy: 'createdAt' }) {
-        const totalCount = await usersCollection.count({});
+        const totalCount = await usersCollection.count({
+            $or: [
+                { login: { $regex: params.searchLoginTerm, $options: '$i' } },
+                { email: { $regex: params.searchEmailTerm, $options: '$i' } }
+            ]
+        });
         const pageSize = params.pageSize || 10;
         const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0;
-        const users = await usersCollection.find({}).toArray();
+        const users = await usersCollection
+            .find({
+                $or: [
+                    { login: { $regex: params.searchLoginTerm, $options: '$i' } },
+                    { email: { $regex: params.searchEmailTerm, $options: '$i' } }
+                ]
+            })
+            .toArray();
 
         return {
             pagesCount: pageSize ? Math.ceil(totalCount / pageSize) : 1,
@@ -100,5 +111,11 @@ export class UserRepository {
         await usersCollection.deleteOne({ _id: user._id });
 
         return { id };
+    }
+
+    static async deleteAll() {
+        await usersCollection.deleteMany({});
+
+        return [];
     }
 }

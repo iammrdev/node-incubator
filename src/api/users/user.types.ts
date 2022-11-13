@@ -24,15 +24,15 @@ export type UserCreateModel = {
 };
 
 export type UserResponseModel = {
-    _id: ObjectId;
+    id: ObjectId;
     login: string;
     email: string;
     createdAt: Date;
-    updatedAt: Date;
 };
 
 export interface GetUsersParams {
-    searchNameTerm?: string;
+    searchLoginTerm?: string;
+    searchEmailTerm?: string;
     pageNumber?: number;
     pageSize?: number;
     sortBy: string;

@@ -8,11 +8,12 @@ services:
       - 3000:3000
     volumes:
       - .:/app
+      - '/app/node_modules'
     restart: always
 
   ngrok:
     image: wernight/ngrok
-    command: "ngrok http -authtoken=${NGROK_TOKEN} --region=eu api:3001"
+    command: "ngrok http -authtoken=${NGROK_TOKEN} --region=eu api:3000"
     ports:
       - 4040:4040
 

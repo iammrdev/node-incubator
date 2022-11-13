@@ -7,6 +7,8 @@ import { UserCreateModel } from './user.types.js';
 
 const getUsers = async (req: Request, res: Response) => {
     const users = await UserService.getUsers({
+        searchLoginTerm: req.query.searchLoginTerm as string || '',
+        searchEmailTerm: req.query.searchEmailTerm as string || '',
         pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
         pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
         sortBy: req.query.sortBy as string,
