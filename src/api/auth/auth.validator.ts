@@ -1,7 +1,7 @@
 import { checkSchema } from 'express-validator';
 
 export const loginSchema = checkSchema({
-    login: {
+    loginOrEmail: {
         in: ['body'],
         trim: {},
         notEmpty: {},

@@ -7,7 +7,7 @@ export const getBlogDto = (blog: WithId<Blog>): Blog => {
     return {
         id: blog._id.toString(),
         name: blog.name,
-        youtubeUrl: blog.youtubeUrl,
+        websiteUrl: blog.websiteUrl,
         createdAt: blog.createdAt,
     };
 };
@@ -76,7 +76,7 @@ export class BlogRepository {
 
         const updated = {
             name: data.name,
-            youtubeUrl: data.youtubeUrl,
+            websiteUrl: data.websiteUrl,
         };
 
         await blogsCollection.updateOne({ _id: blog._id }, { $set: updated });

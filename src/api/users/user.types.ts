@@ -24,7 +24,7 @@ export type UserCreateModel = {
 };
 
 export type UserResponseModel = {
-    id: ObjectId;
+    id: string;
     login: string;
     email: string;
     createdAt: Date;

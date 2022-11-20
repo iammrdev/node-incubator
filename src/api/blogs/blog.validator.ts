@@ -1,7 +1,7 @@
 import { body, checkSchema } from 'express-validator';
 
 export const name = body('name').isLength({ max: 15 });
-export const youtubeUrl = body('youtubeUrl').isLength({ max: 100 }).isURL();
+export const websiteUrl = body('websiteUrl').isLength({ max: 100 }).isURL();
 
 export const getBlogSchema = checkSchema({
     id: {
@@ -19,7 +19,7 @@ export const createBlogSchema = checkSchema({
             options: { max: 15 },
         },
     },
-    youtubeUrl: {
+    websiteUrl: {
         in: ['body'],
         trim: {},
         notEmpty: {},

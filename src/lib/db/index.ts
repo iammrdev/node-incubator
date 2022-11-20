@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { Blog } from '../../api/blogs/blog.types.js';
+import { Comment } from '../../api/comments/comment.types.js';
 import { Post } from '../../api/posts/post.types.js';
 import { User } from '../../api/users/user.types.js';
 import { Video } from '../../api/videos/video.types.js';
@@ -15,6 +16,7 @@ export const videosCollection = db.collection<Video>('videos');
 export const blogsCollection = db.collection<Blog>('blogs');
 export const postsCollection = db.collection<Post>('posts');
 export const usersCollection = db.collection<User>('users');
+export const commentsCollection = db.collection<Comment>('comments');
 
 export const runDB = async () => {
     try {

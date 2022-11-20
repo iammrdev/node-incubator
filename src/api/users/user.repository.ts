@@ -5,7 +5,7 @@ import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } fro
 
 const createUserDto = (user: Required<User>): UserResponseModel => {
     return {
-        id: user._id,
+        id: user._id.toString(),
         login: user.login,
         email: user.email,
         createdAt: user.createdAt,
@@ -91,8 +91,13 @@ export class UserRepository {
         return createUserDto(user);
     }
 
-    static async getUserByLogin(login: string) {
-        const user = await usersCollection.findOne({ login });
+    static async getUserByLoginOrEmail(loginOrEmail: string) {
+        const user = await usersCollection.findOne({
+            $or: [
+                { login: { $regex: loginOrEmail, $options: '$i' } },
+                { email: { $regex: loginOrEmail, $options: '$i' } }
+            ]
+        });
 
         if (!user) {
             return;

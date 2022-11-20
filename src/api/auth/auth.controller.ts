@@ -22,13 +22,13 @@ const login = async (req: Request, res: Response) => {
         });
     }
 
-    const isAuth = await AuthService.login(data);
+    const token = await AuthService.login(data);
 
-    if (!isAuth) {
+    if (!token) {
         return res.sendStatus(StatusCodes.UNAUTHORIZED);
     }
 
-    return res.sendStatus(StatusCodes.NO_CONTENT);
+    return res.status(StatusCodes.OK).send(token);
 };
 
 export const AuthController = {

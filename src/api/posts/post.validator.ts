@@ -2,7 +2,7 @@ import { body, checkSchema } from 'express-validator';
 import { BlogRepository } from '../blogs/blog.repository.js';
 
 export const name = body('name').isLength({ max: 15 });
-export const youtubeUrl = body('youtubeUrl').isLength({ max: 100 }).isURL();
+export const websiteUrl = body('websiteUrl').isLength({ max: 100 }).isURL();
 
 export const createPostSchema = checkSchema({
     title: {
@@ -71,4 +71,11 @@ export const createPostByBlogSchema = checkSchema({
             options: { max: 1000 },
         },
     }
+});
+
+export const getPostSchema = checkSchema({
+    id: {
+        in: ['params'],
+        isMongoId: {},
+    },
 });

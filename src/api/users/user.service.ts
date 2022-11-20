@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 import { UserRepository } from './user.repository.js';
 import { GetUsersParams, UserCreateModel } from './user.types.js';
 
@@ -8,21 +10,38 @@ const generateHash = async (password: string, salt: string) => {
     return hash;
 };
 
-const checkCredentials = async (login: string, password: string) => {
-    const user = await UserRepository.getUserByLogin(login);
+const checkCredentials = async (loginOrEmail: string, password: string) => {
+    const user = await UserRepository.getUserByLoginOrEmail(loginOrEmail);
 
     if (!user) {
-        return false;
+        return null;
     }
 
     const hash = await generateHash(password, user.salt);
 
     if (user.hash !== hash) {
-        return false;
+        return null;
     }
 
-    return true;
+    return user;
 };
+
+const createJWT = (userId: string) => {
+    const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+
+    return { accessToken }
+}
+
+const getUserIdByToken = (token: string) => {
+    try {
+        const result = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+        return new ObjectId(result.userId)
+    } catch (error) {
+        return null
+
+    }
+}
 
 const createUser = async ({ login, password, email }: Omit<UserCreateModel, 'id'>) => {
     const salt = await bcrypt.genSalt(10);
@@ -35,13 +54,20 @@ const getUsers = async (params: GetUsersParams) => {
     return UserRepository.getAll(params);
 };
 
+const getUser = async (userId: string) => {
+    return UserRepository.getUser(userId);
+}
+
 const deleteUser = async (id: string) => {
     return UserRepository.deleteUser(id);
 };
 
 export const UserService = {
     getUsers,
+    getUser,
     createUser,
     deleteUser,
-    checkCredentials
+    checkCredentials,
+    createJWT,
+    getUserIdByToken
 };

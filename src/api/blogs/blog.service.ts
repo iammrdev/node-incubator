@@ -5,7 +5,7 @@ import { Blog } from './blog.types.js';
 const create = async (data: Omit<Blog, 'id'>) => {
     const blog = {
         name: data.name,
-        youtubeUrl: data.youtubeUrl,
+        websiteUrl: data.websiteUrl,
     };
 
     return BlogRepository.createBlog(blog);
