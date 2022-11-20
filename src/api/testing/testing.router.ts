@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { TestingController } from './testing.controller.js';
 
-const router = Router();
+const testingRouter = Router();
 
-router.route('/all-data').delete(TestingController.deleteAllData);
+testingRouter.route('/all-data').delete(TestingController.deleteAllData);
 
-export default router;
+export { testingRouter };

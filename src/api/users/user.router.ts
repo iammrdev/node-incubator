@@ -3,9 +3,9 @@ import { basicAuth } from '../auth/auth.middlewares.js';
 import { UserController } from './user.controller.js';
 import { createUserSchema } from './user.validator.js';
 
-const router = Router();
+const userRouter = Router();
 
-router.route('/').get(UserController.getUsers).post(basicAuth, createUserSchema, UserController.createUser);
-router.route('/:id').delete(basicAuth, UserController.deleteUser);
+userRouter.route('/').get(UserController.getUsers).post(basicAuth, createUserSchema, UserController.createUser);
+userRouter.route('/:id').delete(basicAuth, UserController.deleteUser);
 
-export default router;
+export { userRouter };
