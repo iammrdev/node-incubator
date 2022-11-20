@@ -18,6 +18,8 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     const [type, token] = req.headers.authorization.split(' ');
     const userId = await UserService.getUserIdByToken(token);
 
+    console.log({ userId })
+
     if (!type || !userId) {
         res.send(StatusCodes.UNAUTHORIZED)
 

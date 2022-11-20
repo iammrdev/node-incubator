@@ -7,6 +7,7 @@ import { videoRouter } from './api/videos/video.router.js';
 import { postRouter } from './api/posts/post.router.js';
 import { userRouter } from './api/users/user.router.js';
 import { authRouter } from './api/auth/auth.router.js';
+import { commentRouter } from './api/comments/comment.router.js';
 import { runDB } from './lib/db/index.js';
 
 const app = express();
@@ -15,11 +16,12 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use('/testing', testingRouter);
+app.use('/auth', authRouter);
 app.use('/videos', videoRouter);
 app.use('/blogs', blogRouter);
 app.use('/posts', postRouter);
 app.use('/users', userRouter);
-app.use('/auth', authRouter);
+app.use('/comments', commentRouter);
 app.use('/', indexRouter);
 
 const init = async () => {

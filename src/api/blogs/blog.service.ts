@@ -5,6 +5,7 @@ import { Blog } from './blog.types.js';
 const create = async (data: Omit<Blog, 'id'>) => {
     const blog = {
         name: data.name,
+        description: data.description,
         websiteUrl: data.websiteUrl,
     };
 

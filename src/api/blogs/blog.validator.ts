@@ -19,6 +19,14 @@ export const createBlogSchema = checkSchema({
             options: { max: 15 },
         },
     },
+    description: {
+        in: ['body'],
+        trim: {},
+        notEmpty: {},
+        isLength: {
+            options: { max: 500 },
+        },
+    },
     websiteUrl: {
         in: ['body'],
         trim: {},

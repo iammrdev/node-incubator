@@ -31,8 +31,8 @@ export class UserRepository {
     static async getAll(params: GetUsersParams = { sortBy: 'createdAt' }) {
         const totalCount = await usersCollection.count({
             $or: [
-                { login: { $regex: params.searchLoginTerm, $options: '$i' } },
-                { email: { $regex: params.searchEmailTerm, $options: '$i' } }
+                { login: { $regex: params.searchLoginTerm || "", $options: '$i' } },
+                { email: { $regex: params.searchEmailTerm || "", $options: '$i' } }
             ]
         });
         const pageSize = params.pageSize || 10;
@@ -40,8 +40,8 @@ export class UserRepository {
         const users = await usersCollection
             .find({
                 $or: [
-                    { login: { $regex: params.searchLoginTerm, $options: '$i' } },
-                    { email: { $regex: params.searchEmailTerm, $options: '$i' } }
+                    { login: { $regex: params.searchLoginTerm || "", $options: '$i' } },
+                    { email: { $regex: params.searchEmailTerm || "", $options: '$i' } }
                 ]
             })
             .toArray();

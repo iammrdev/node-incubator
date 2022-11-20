@@ -86,7 +86,7 @@ export class CommentRepository {
             .limit(pageSize || totalCount)
             .toArray();
 
-        const users = await (await UserRepository.getAll()).items;
+        const users = await UserRepository.getAll();
 
         return {
             page: params.pageNumber || 1,
@@ -96,7 +96,7 @@ export class CommentRepository {
             items: comments.map((comment) =>
                 createCommentDto(
                     comment,
-                    users.find((user) => user.id === comment.userId),
+                    users.items.find((user) => user.id === comment.userId),
                 ),
             ),
         };
