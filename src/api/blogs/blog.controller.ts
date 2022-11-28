@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { PostService } from '../posts/post.service.js';
-import { Post } from '../posts/post.types.js';
-import { BlogService } from './blog.service.js';
-import { Blog } from './blog.types.js';
+import { PostService } from '../posts/post.service';
+import { Post } from '../posts/post.types';
+import { BlogService } from './blog.service';
+import { Blog } from './blog.types';
 
 const getBlogs = async (req: Request, res: Response) => {
     const blogs = await BlogService.getAll({

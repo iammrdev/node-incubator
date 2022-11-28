@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
-  "type": "module",
   "scripts": {
-    "dev": "npx nodemon --legacy-watch",
+    "dev": "yarn nodemon --inspect dist/index.js",
     "watch": "tsc -w",
     "build": "tsc",
     "start": "node dist/index.js",

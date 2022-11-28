@@ -1,7 +1,7 @@
 import { ObjectId, WithId } from 'mongodb';
-import { blogsCollection } from '../../lib/db/index.js';
-import { GetPostsByBlogIdParams } from '../posts/post.types.js';
-import { Blog } from './blog.types.js';
+import { blogsCollection } from '../../lib/db/index';
+import { GetPostsByBlogIdParams } from '../posts/post.types';
+import { Blog } from './blog.types';
 
 export const getBlogDto = (blog: WithId<Blog>): Blog => {
     return {

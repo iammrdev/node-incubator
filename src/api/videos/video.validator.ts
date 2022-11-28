@@ -1,4 +1,4 @@
-import { Video } from './video.types.js';
+import { Video } from './video.types';
 
 type ValidateFunc = (value: any) => boolean;
 

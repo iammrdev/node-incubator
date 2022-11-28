@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import { UserRepository } from './user.repository.js';
-import { GetUsersParams, UserCreateModel } from './user.types.js';
+import { UserRepository } from './user.repository';
+import { GetUsersParams, UserCreateModel } from './user.types';
 
 const generateHash = async (password: string, salt: string) => {
     const hash = await bcrypt.hash(password, salt);

@@ -1,6 +1,6 @@
-import { GetPostsByBlogIdParams } from '../posts/post.types.js';
-import { BlogRepository } from './blog.repository.js';
-import { Blog } from './blog.types.js';
+import { GetPostsByBlogIdParams } from '../posts/post.types';
+import { BlogRepository } from './blog.repository';
+import { Blog } from './blog.types';
 
 const create = async (data: Omit<Blog, 'id'>) => {
     const blog = {

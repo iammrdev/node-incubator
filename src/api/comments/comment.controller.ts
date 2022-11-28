@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { CommentService } from './comment.service.js';
-import { CommentCreateModel } from './comment.types.js';
+import { CommentService } from './comment.service';
+import { CommentCreateModel } from './comment.types';
 
 
 const getComment = async (req: Request, res: Response) => {

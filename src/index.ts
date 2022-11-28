@@ -1,14 +1,14 @@
 import 'dotenv/config';
 import express from 'express';
-import { indexRouter } from './api/index/index.router.js';
-import { blogRouter } from './api/blogs/blog.router.js';
-import { testingRouter } from './api/testing/testing.router.js';
-import { videoRouter } from './api/videos/video.router.js';
-import { postRouter } from './api/posts/post.router.js';
-import { userRouter } from './api/users/user.router.js';
-import { authRouter } from './api/auth/auth.router.js';
-import { commentRouter } from './api/comments/comment.router.js';
-import { runDB } from './lib/db/index.js';
+import { indexRouter } from './api/index/index.router';
+import { blogRouter } from './api/blogs/blog.router';
+import { testingRouter } from './api/testing/testing.router';
+import { videoRouter } from './api/videos/video.router';
+import { postRouter } from './api/posts/post.router';
+import { userRouter } from './api/users/user.router';
+import { authRouter } from './api/auth/auth.router';
+import { commentRouter } from './api/comments/comment.router';
+import { runDB } from './lib/db/index';
 
 const app = express();
 const port = process.env.PORT || 3000;

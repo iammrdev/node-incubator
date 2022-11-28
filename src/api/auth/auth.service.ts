@@ -1,5 +1,5 @@
-import { UserService } from '../users/user.service.js';
-import { UserLoginModel } from './auth.types.js';
+import { UserService } from '../users/user.service';
+import { UserLoginModel } from './auth.types';
 
 const login = async ({ loginOrEmail, password }: UserLoginModel) => {
     const user = await UserService.checkCredentials(loginOrEmail, password);

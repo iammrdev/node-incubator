@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { AuthService } from './auth.service.js';
-import { UserLoginModel } from './auth.types.js';
+import { AuthService } from './auth.service';
+import { UserLoginModel } from './auth.types';
 
 const login = async (req: Request, res: Response) => {
     const data: UserLoginModel = req.body;

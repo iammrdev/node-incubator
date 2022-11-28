@@ -1,8 +1,8 @@
 import { ObjectId, WithId } from 'mongodb';
-import { blogsCollection, postsCollection } from '../../lib/db/index.js';
-import { BlogRepository, getBlogDto } from '../blogs/blog.repository.js';
-import { Blog } from '../blogs/blog.types.js';
-import { GetPostsByBlogIdParams, Post } from './post.types.js';
+import { blogsCollection, postsCollection } from '../../lib/db/index';
+import { BlogRepository, getBlogDto } from '../blogs/blog.repository';
+import { Blog } from '../blogs/blog.types';
+import { GetPostsByBlogIdParams, Post } from './post.types';
 
 const createPostDto = (post: WithId<Post>, blog?: Blog): Post => {
     return {

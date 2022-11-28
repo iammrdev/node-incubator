@@ -1,5 +1,5 @@
 import { body, checkSchema } from 'express-validator';
-import { BlogRepository } from '../blogs/blog.repository.js';
+import { BlogRepository } from '../blogs/blog.repository';
 
 export const name = body('name').isLength({ max: 15 });
 export const websiteUrl = body('websiteUrl').isLength({ max: 100 }).isURL();

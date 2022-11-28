@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { CommentService } from './comment.service.js';
+import { CommentService } from './comment.service';
 
 
 export const commentAuth = async (req: Request, res: Response, next: NextFunction) => {

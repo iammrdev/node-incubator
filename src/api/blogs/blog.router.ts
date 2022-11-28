@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { basicAuth } from '../auth/auth.middlewares.js';
-import { createPostByBlogSchema } from '../posts/post.validator.js';
-import { BlogController } from './blog.controller.js';
-import { createBlogSchema, getBlogSchema } from './blog.validator.js';
+import { basicAuth } from '../auth/auth.middlewares';
+import { createPostByBlogSchema } from '../posts/post.validator';
+import { BlogController } from './blog.controller';
+import { createBlogSchema, getBlogSchema } from './blog.validator';
 
 const blogRouter = Router();
 

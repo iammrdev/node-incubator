@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { bearerAuth } from '../auth/auth.middlewares.js';
-import { CommentController } from './comment.controller.js';
-import { commentAuth } from './comment.middlewares.js';
-import { createCommentSchema } from './comment.validator.js';
+import { bearerAuth } from '../auth/auth.middlewares';
+import { CommentController } from './comment.controller';
+import { commentAuth } from './comment.middlewares';
+import { createCommentSchema } from './comment.validator';
 
 const commentRouter = Router();
 

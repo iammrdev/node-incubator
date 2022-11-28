@@ -1,8 +1,8 @@
 import { ObjectId, WithId } from 'mongodb';
-import { commentsCollection } from '../../lib/db/index.js';
-import { UserRepository } from '../users/user.repository.js';
-import { UserResponseModel } from '../users/user.types.js';
-import { Comment, CommentCreateModel, CommentResponseModel, GetCommentsByPostParams } from './comment.types.js';
+import { commentsCollection } from '../../lib/db/index';
+import { UserRepository } from '../users/user.repository';
+import { UserResponseModel } from '../users/user.types';
+import { Comment, CommentCreateModel, CommentResponseModel, GetCommentsByPostParams } from './comment.types';
 
 const createCommentDto = (comment: WithId<Comment>, user?: UserResponseModel): CommentResponseModel => {
     return {

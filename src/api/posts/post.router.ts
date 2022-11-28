@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { basicAuth, bearerAuth } from '../auth/auth.middlewares.js';
-import { createCommentSchema } from '../comments/comment.validator.js';
-import { PostController } from './post.controller.js';
-import { createPostSchema, getPostSchema } from './post.validator.js';
+import { basicAuth, bearerAuth } from '../auth/auth.middlewares';
+import { createCommentSchema } from '../comments/comment.validator';
+import { PostController } from './post.controller';
+import { createPostSchema, getPostSchema } from './post.validator';
 
 const postRouter = Router();
 

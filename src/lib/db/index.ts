@@ -1,9 +1,9 @@
 import { MongoClient } from 'mongodb';
-import { Blog } from '../../api/blogs/blog.types.js';
-import { Comment } from '../../api/comments/comment.types.js';
-import { Post } from '../../api/posts/post.types.js';
-import { User } from '../../api/users/user.types.js';
-import { Video } from '../../api/videos/video.types.js';
+import { Blog } from '../../api/blogs/blog.types';
+import { Comment } from '../../api/comments/comment.types';
+import { Post } from '../../api/posts/post.types';
+import { User } from '../../api/users/user.types';
+import { Video } from '../../api/videos/video.types';
 
 const mongoURI =
     process.env.mongoURI || 'mongodb+srv://admin:passwordistooweak@cluster0.vwye1ro.mongodb.net/basic-backend';

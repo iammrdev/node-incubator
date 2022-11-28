@@ -1,5 +1,5 @@
-import { PostRepository } from './post.repository.js';
-import { GetPostsByBlogIdParams, Post } from './post.types.js';
+import { PostRepository } from './post.repository';
+import { GetPostsByBlogIdParams, Post } from './post.types';
 
 const create = async (data: Omit<Post, 'id'>) => {
     return PostRepository.createPost(data);

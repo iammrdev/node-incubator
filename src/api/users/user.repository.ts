@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
-import { usersCollection } from '../../lib/db/index.js';
+import { usersCollection } from '../../lib/db/index';
 
-import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } from './user.types.js';
+import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } from './user.types';
 
 const createUserDto = (user: Required<User>): UserResponseModel => {
     return {

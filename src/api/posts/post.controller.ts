@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
-import { CommentService } from '../comments/comment.service.js';
-import { CommentCreateModel } from '../comments/comment.types.js';
-import { PostService } from './post.service.js';
-import { Post } from './post.types.js';
+import { CommentService } from '../comments/comment.service';
+import { CommentCreateModel } from '../comments/comment.types';
+import { PostService } from './post.service';
+import { Post } from './post.types';
 
 const getPosts = async (req: Request, res: Response) => {
     const posts = await PostService.getAll({

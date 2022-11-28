@@ -1,6 +1,6 @@
 import { ObjectId, WithId } from 'mongodb';
-import { videosCollection } from '../../lib/db/index.js';
-import { Video } from './video.types.js';
+import { videosCollection } from '../../lib/db/index';
+import { Video } from './video.types';
 
 const createVideoDto = (video: WithId<Video>): Video => {
     return {

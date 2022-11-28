@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import auth from 'express-basic-auth';
 import { StatusCodes } from 'http-status-codes';
-import { UserService } from '../users/user.service.js';
+import { UserService } from '../users/user.service';
 
 export const basicAuth = auth({
     users: { admin: 'qwerty' },

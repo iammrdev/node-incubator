@@ -1,5 +1,5 @@
-import { VideoRepository } from './video.repository.js';
-import { Video } from './video.types.js';
+import { VideoRepository } from './video.repository';
+import { Video } from './video.types';
 
 const create = async (data: Omit<Video, 'id'>) => {
     return VideoRepository.createVideo(data);

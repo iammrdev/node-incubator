@@ -1,5 +1,5 @@
-import { CommentRepository } from './comment.repository.js';
-import { CommentCreateModel, GetCommentsByPostParams } from './comment.types.js';
+import { CommentRepository } from './comment.repository';
+import { CommentCreateModel, GetCommentsByPostParams } from './comment.types';
 
 const getComment = async (id: string) => {
     return CommentRepository.getComment(id);
