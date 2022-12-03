@@ -22,7 +22,7 @@ export class CommentRepository {
             return;
         }
 
-        const user = await UserRepository.getUser(comment.userId.toString());
+        const { user } = await UserRepository.getUser(comment.userId.toString());
 
         return createCommentDto(comment, user);
     }

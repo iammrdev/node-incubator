@@ -48,9 +48,9 @@ const createUser = async (req: Request, res: Response) => {
         });
     }
 
-    const result = await UserService.createUser(data);
+    const { user } = await UserService.createUser(data);
 
-    return res.status(StatusCodes.CREATED).send(result);
+    return res.status(StatusCodes.CREATED).send(user);
 };
 
 export const UserController = {

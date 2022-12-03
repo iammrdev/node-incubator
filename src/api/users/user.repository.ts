@@ -1,4 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid'
+import add from 'date-fns/add'
 import { usersCollection } from '../../lib/db/index';
 
 import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } from './user.types';
@@ -19,6 +21,12 @@ export class UserRepository {
             hash: data.hash,
             salt: data.salt,
             email: data.email,
+            confirmation: {
+                status: false,
+                code: uuidv4(),
+                expiration: add(new Date(), { minutes: 60 }),
+                activation: null
+            },
             createdAt: new Date(),
             updatedAt: new Date(),
         };
@@ -85,10 +93,10 @@ export class UserRepository {
         const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
         if (!user) {
-            return;
+            return { user: undefined }
         }
 
-        return createUserDto(user);
+        return { user: createUserDto(user), confirmation: user.confirmation };
     }
 
     static async getUserByLoginOrEmail(loginOrEmail: string) {
@@ -104,6 +112,33 @@ export class UserRepository {
         }
 
         return user;
+    }
+
+    static async getUserByConfirmationCode(code: string) {
+        const user = await usersCollection.findOne({ 'confirmation.code': code });
+
+        if (!user) {
+            return;
+        }
+
+        return user;
+    }
+
+    static async updateUserConfirmation(id: string, confirmation: any) {
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!user) {
+            return;
+        }
+
+        await usersCollection.updateOne({ _id: user._id }, {
+            $set: {
+                ...user,
+                confirmation
+            }
+        });
+
+        return UserRepository.getUser(id);
     }
 
     static async deleteUser(id: string) {

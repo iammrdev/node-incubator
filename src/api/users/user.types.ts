@@ -6,6 +6,12 @@ export interface User {
     hash: string;
     salt: string;
     email: string;
+    confirmation: {
+        status: boolean;
+        code: string;
+        expiration: Date
+        activation: Date | null
+    }
     createdAt: Date;
     updatedAt: Date;
 }

@@ -5,4 +5,6 @@ const indexRouter = Router();
 
 indexRouter.route('/').get(IndexController.health);
 
+indexRouter.route('/email').get(IndexController.email);
+
 export { indexRouter };
