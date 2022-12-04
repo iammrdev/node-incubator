@@ -26,22 +26,21 @@ const checkCredentials = async (loginOrEmail: string, password: string) => {
     return user;
 };
 
-const createJWT = (userId: string) => {
-    const accessToken = jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+const createJWT = (userId: string, options: { expiresIn: string }) => {
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn: options.expiresIn });
 
-    return { accessToken }
-}
+    return token;
+};
 
 const getUserIdByToken = (token: string) => {
     try {
         const result = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-        return new ObjectId(result.userId)
+        return new ObjectId(result.userId);
     } catch (error) {
-        return null
-
+        return null;
     }
-}
+};
 
 const createUser = async ({ login, password, email }: Omit<UserCreateModel, 'id'>) => {
     const salt = await bcrypt.genSalt(10);
@@ -56,7 +55,7 @@ const getUsers = async (params: GetUsersParams) => {
 
 const getUser = async (userId: string) => {
     return UserRepository.getUser(userId);
-}
+};
 
 const deleteUser = async (id: string) => {
     return UserRepository.deleteUser(id);
@@ -69,5 +68,5 @@ export const UserService = {
     deleteUser,
     checkCredentials,
     createJWT,
-    getUserIdByToken
+    getUserIdByToken,
 };

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import { indexRouter } from './api/index/index.router';
 import { blogRouter } from './api/blogs/blog.router';
 import { testingRouter } from './api/testing/testing.router';
@@ -14,6 +15,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/testing', testingRouter);
 app.use('/auth', authRouter);

@@ -7,10 +7,9 @@ export const basicAuth = auth({
     users: { admin: 'qwerty' },
 });
 
-
 export const bearerAuth = async (req: Request, res: Response, next: NextFunction) => {
     if (!req.headers.authorization) {
-        res.send(StatusCodes.UNAUTHORIZED)
+        res.send(StatusCodes.UNAUTHORIZED);
 
         return;
     }
@@ -19,15 +18,15 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     const userId = await UserService.getUserIdByToken(token);
 
     if (!type || !userId) {
-        res.send(StatusCodes.UNAUTHORIZED)
+        res.send(StatusCodes.UNAUTHORIZED);
 
         return;
     }
 
-    const { user } = await UserService.getUser(userId.toString())
+    const { user } = await UserService.getUser(userId.toString());
 
     if (!user) {
-        res.send(StatusCodes.UNAUTHORIZED)
+        res.send(StatusCodes.UNAUTHORIZED);
 
         return;
     }
@@ -35,4 +34,14 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     req.user = user;
 
     next();
-}
+};
+
+export const checkRefreshToken = (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken || typeof refreshToken !== 'string') {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    next();
+};

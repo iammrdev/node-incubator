@@ -10,6 +10,7 @@ import { UserService } from '../users/user.service';
 import { UserCreateModel } from '../users/user.types';
 import { AuthService } from './auth.service';
 import { UserLoginModel } from './auth.types';
+import { AuthRepository } from './auth.repository';
 
 const login = async (req: Request, res: Response) => {
     const data: UserLoginModel = req.body;
@@ -29,13 +30,18 @@ const login = async (req: Request, res: Response) => {
         });
     }
 
-    const token = await AuthService.login(data);
+    const tokens = await AuthService.login(data);
 
-    if (!token) {
+    if (!tokens) {
         return res.sendStatus(StatusCodes.UNAUTHORIZED);
     }
 
-    return res.status(StatusCodes.OK).send(token);
+    res.cookie('refreshToken', tokens.refreshToken, {
+        secure: process.env.NODE_ENV !== 'development',
+        httpOnly: true,
+    });
+
+    return res.status(StatusCodes.OK).send({ accessToken: tokens.accessToken });
 };
 
 const createUser = async (req: Request, res: Response) => {
@@ -174,10 +180,70 @@ const getAuthInfo = async (req: Request, res: Response) => {
     return res.status(StatusCodes.OK).send(authInfo);
 };
 
+const logout = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    //@todo: validate token
+    const userId = await UserService.getUserIdByToken(refreshToken);
+    const tokenInfo = await AuthRepository.getTokenInfo(refreshToken);
+
+    if (!userId || !tokenInfo) {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    const result = await AuthRepository.deleteToken(refreshToken);
+
+    if (!result) {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
+const refreshToken = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    //@todo: validate token
+    const userId = await UserService.getUserIdByToken(refreshToken);
+    const tokenInfo = await AuthRepository.getTokenInfo(refreshToken);
+
+    if (!userId || !tokenInfo) {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    const result = await AuthRepository.deleteToken(refreshToken);
+
+    if (!result) {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    const tokens = {
+        accessToken: UserService.createJWT(userId.toString(), { expiresIn: '1m' }),
+        refreshToken: UserService.createJWT(userId.toString(), { expiresIn: '1h' }),
+    };
+
+    const saveTokenResult = await AuthRepository.saveRefreshToken({
+        userId: userId.toString(),
+        refreshToken: tokens.refreshToken,
+    });
+
+    if (!saveTokenResult) {
+        return res.sendStatus(StatusCodes.UNAUTHORIZED);
+    }
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+        secure: process.env.NODE_ENV !== 'development',
+        httpOnly: true,
+    });
+
+    return res.status(StatusCodes.OK).send({ accessToken: tokens.accessToken });
+};
+
 export const AuthController = {
     login,
+    logout,
     createUser,
     confirmRegistration,
     resendConfirmation,
     getAuthInfo,
+    refreshToken,
 };

@@ -1,3 +1,4 @@
+import { AuthRepository } from '../auth/auth.repository';
 import { BlogRepository } from '../blogs/blog.repository';
 import { CommentRepository } from '../comments/comment.repository';
 import { PostRepository } from '../posts/post.repository';
@@ -9,7 +10,8 @@ const deleteAllData = async () => {
     BlogRepository.deleteAll();
     PostRepository.deleteAll();
     UserRepository.deleteAll();
-    CommentRepository.deleteAll()
+    CommentRepository.deleteAll();
+    AuthRepository.deleteAll();
 };
 
 export const TestingService = {
