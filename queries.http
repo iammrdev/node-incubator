@@ -1,4 +1,4 @@
-@baseUrl =  https://backend-basic-fkxpwpg3h-iammrdev.vercel.app/
+@baseUrl =  http://localhost:5000
 
 ###
 
@@ -20,7 +20,7 @@ Content-Type: application/json
 
 {
   "loginOrEmail": "admin",
-  "password": 123456
+  "password": 1234562
 }
 
 ###

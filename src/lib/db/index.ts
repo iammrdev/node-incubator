@@ -3,6 +3,7 @@ import { RefreshToken } from '../../api/auth/auth.types';
 import { Blog } from '../../api/blogs/blog.types';
 import { Comment } from '../../api/comments/comment.types';
 import { Post } from '../../api/posts/post.types';
+import { AuthAttempt } from '../../api/security/security.types';
 import { User } from '../../api/users/user.types';
 import { Video } from '../../api/videos/video.types';
 
@@ -19,11 +20,11 @@ export const postsCollection = db.collection<Post>('posts');
 export const usersCollection = db.collection<User>('users');
 export const commentsCollection = db.collection<Comment>('comments');
 export const tokensCollection = db.collection<RefreshToken>('tokens');
+export const authAttemptsCollection = db.collection<AuthAttempt>('auth-attempts');
 
 export const runDB = async () => {
     try {
         await client.connect();
-        // await client.db("videos").command({ ping: 1 })
 
         console.log('Connected successfully to mongo server');
     } catch (error) {
