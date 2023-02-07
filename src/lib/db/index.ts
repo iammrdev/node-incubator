@@ -7,7 +7,7 @@ import { User } from '../../api/users/user.types';
 import { Video } from '../../api/videos/video.types';
 
 const mongoURI =
-    process.env.mongoURI || 'mongodb+srv://admin:passwordistooweak@cluster0.vwye1ro.mongodb.net/basic-backend';
+    process.env.mongoURI || 'mongodb+srv://admin:test@cluster0.6fqjtpg.mongodb.net/?retryWrites=true&w=majority';
 
 export const client = new MongoClient(mongoURI);
 

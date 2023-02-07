@@ -1,6 +1,7 @@
 import isAfter from 'date-fns/isAfter';
 import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
@@ -13,7 +14,11 @@ import { UserLoginModel } from './auth.types';
 import { AuthRepository } from './auth.repository';
 
 const login = async (req: Request, res: Response) => {
-    const data: UserLoginModel = req.body;
+    const data: UserLoginModel = {
+        ...req.body,
+        ip: req.ip,
+        title: req.headers['user-agent'],
+    };
 
     const errors = validationResult.withDefaults({
         formatter: (error) => {
@@ -202,7 +207,6 @@ const logout = async (req: Request, res: Response) => {
 const refreshToken = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
 
-    //@todo: validate token
     const userId = await UserService.getUserIdByToken(refreshToken);
     const tokenInfo = await AuthRepository.getTokenInfo(refreshToken);
 
@@ -217,13 +221,20 @@ const refreshToken = async (req: Request, res: Response) => {
     }
 
     const tokens = {
-        accessToken: UserService.createJWT(userId.toString(), { expiresIn: '1m' }),
-        refreshToken: UserService.createJWT(userId.toString(), { expiresIn: '1h' }),
+        accessToken: UserService.createJWT(userId.toString(), { expiresIn: '10s' }),
+        refreshToken: UserService.createJWT(userId.toString(), { deviceId: tokenInfo.deviceId, expiresIn: '20s' }),
     };
+
+    const refreshTokenPayload = jwt.decode(tokens.refreshToken) as JwtPayload;
 
     const saveTokenResult = await AuthRepository.saveRefreshToken({
         userId: userId.toString(),
+        deviceId: refreshTokenPayload.deviceId,
+        ip: req.ip,
+        title: req.headers['user-agent']!,
         refreshToken: tokens.refreshToken,
+        iat: refreshTokenPayload.iat!,
+        exp: refreshTokenPayload.exp!,
     });
 
     if (!saveTokenResult) {

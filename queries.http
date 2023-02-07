@@ -1,0 +1,46 @@
+@baseUrl =  https://backend-basic-fkxpwpg3h-iammrdev.vercel.app/
+
+###
+
+## Регистрация
+POST {{baseUrl}}/auth/registration HTTP/1.1
+Content-Type: application/json
+
+{
+  "login": "admin",
+  "password": 123456,
+  "email": "admin@local.io"
+}
+
+###
+
+## Аутентификация
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "loginOrEmail": "admin",
+  "password": 123456
+}
+
+###
+
+## Обновление токена
+POST {{baseUrl}}/auth/refresh-token HTTP/1.1
+
+###
+
+## Активные сессии
+GET {{baseUrl}}/security/devices HTTP/1.1
+
+###
+
+## Удалить сессию
+DELETE {{baseUrl}}/security/devices/5c522aa5-37ad-465c-8d8a-71ca1c76a4b3 HTTP/1.1
+
+###
+
+## Удалить сессии
+DELETE {{baseUrl}}/security/devices HTTP/1.1
+
+###

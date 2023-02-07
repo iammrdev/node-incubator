@@ -26,8 +26,10 @@ const checkCredentials = async (loginOrEmail: string, password: string) => {
     return user;
 };
 
-const createJWT = (userId: string, options: { expiresIn: string }) => {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn: options.expiresIn });
+const createJWT = (userId: string, options: { deviceId?: string; expiresIn: string }) => {
+    const token = jwt.sign({ userId, deviceId: options.deviceId }, process.env.JWT_SECRET!, {
+        expiresIn: options.expiresIn,
+    });
 
     return token;
 };

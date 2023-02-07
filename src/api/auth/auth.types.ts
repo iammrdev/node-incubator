@@ -1,11 +1,17 @@
 export type UserLoginModel = {
     loginOrEmail: string;
     password: string;
+    ip: string;
+    title: string;
 };
 
 export type RefreshToken = {
     id?: string;
     userId: string;
+    deviceId: string;
+    title: string;
+    ip: string;
     token: string;
-    createdAt: Date;
+    iat: number;
+    exp: number;
 };
