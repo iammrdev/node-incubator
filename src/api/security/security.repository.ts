@@ -8,9 +8,8 @@ export class SecurityRepository {
         return result;
     }
 
-    static async getAttemptsByIp(ip: string, exp: number) {
-        console.log({ exp });
-        const attempts = await authAttemptsCollection.find({ $and: [{ ip }, { timestamp: { $gt: exp } }] });
+    static async getAttemptsByIp(ip: string, url: string, exp: number) {
+        const attempts = await authAttemptsCollection.find({ ip, url, timestamp: { $gte: exp } });
 
         return attempts.toArray();
     }
