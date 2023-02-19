@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { UserRepository } from './user.repository';
 import { GetUsersParams, UserCreateModel } from './user.types';
 
-const generateHash = async (password: string, salt: string) => {
+export const generateHash = async (password: string, salt: string) => {
     const hash = await bcrypt.hash(password, salt);
 
     return hash;

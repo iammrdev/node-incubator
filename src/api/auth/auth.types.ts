@@ -15,3 +15,15 @@ export type RefreshToken = {
     iat: number;
     exp: number;
 };
+
+
+export type RecoveryPassword = {
+    id?: string;
+    userId: string;
+    deviceId: string;
+    title: string;
+    ip: string;
+    code: string;
+    iat: number;
+    exp: number;
+};

@@ -1,13 +1,14 @@
 import isAfter from 'date-fns/isAfter';
 import { v4 as uuidv4 } from 'uuid';
 import add from 'date-fns/add';
+import bcrypt from 'bcrypt';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import { EmailService } from '../emails/email.service';
 import { UserRepository } from '../users/user.repository';
-import { UserService } from '../users/user.service';
+import { generateHash, UserService } from '../users/user.service';
 import { UserCreateModel } from '../users/user.types';
 import { AuthService } from './auth.service';
 import { UserLoginModel } from './auth.types';
@@ -249,6 +250,91 @@ const refreshToken = async (req: Request, res: Response) => {
     return res.status(StatusCodes.OK).send({ accessToken: tokens.accessToken });
 };
 
+const passwordRecovery = async (req: Request, res: Response) => {
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const user = await UserRepository.getUserByLoginOrEmail(req.body.email);
+
+    if (!user) {
+        return res.sendStatus(StatusCodes.NO_CONTENT);
+    }
+
+    const deviceId = uuidv4();
+
+    const recovery = UserService.createJWT(user._id.toString(), { deviceId, expiresIn: '1200s' });
+    const recoveryPayload = jwt.decode(recovery) as JwtPayload;
+
+    await AuthRepository.saveRecoveryCode({
+        userId: user._id.toString(),
+        deviceId: recoveryPayload.deviceId,
+        ip: req.ip,
+        title: req.headers['user-agent']!,
+        code: recovery,
+        iat: recoveryPayload.iat!,
+        exp: recoveryPayload.exp!,
+    });
+
+    const info = await EmailService.sendRecoveryEmail({
+        email: user.email,
+        code: recovery,
+    });
+
+    if (!info.messageId) {
+        return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
+const newPassword = async (req: Request, res: Response) => {
+    const { newPassword, recoveryCode } = req.body;
+
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const result = await AuthRepository.getRecoveryByCode(recoveryCode);
+
+    if (!result) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: [
+                { message: 'recovery code is incorrect, expired or already been applied', field: 'recoveryCode' },
+            ],
+        });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await generateHash(newPassword, salt);
+
+    await UserRepository.updateUserPassword(result.userId, hash, salt);
+
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
 export const AuthController = {
     login,
     logout,
@@ -257,4 +343,6 @@ export const AuthController = {
     resendConfirmation,
     getAuthInfo,
     refreshToken,
+    passwordRecovery,
+    newPassword,
 };

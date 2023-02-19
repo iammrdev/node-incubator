@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
-import { v4 as uuidv4 } from 'uuid'
-import add from 'date-fns/add'
+import { v4 as uuidv4 } from 'uuid';
+import add from 'date-fns/add';
 import { usersCollection } from '../../lib/db/index';
 
 import { GetUsersParams, User, UserRepostoryCreateModel, UserResponseModel } from './user.types';
@@ -25,7 +25,7 @@ export class UserRepository {
                 status: false,
                 code: uuidv4(),
                 expiration: add(new Date(), { minutes: 60 }),
-                activation: null
+                activation: null,
             },
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -39,18 +39,18 @@ export class UserRepository {
     static async getAll(params: GetUsersParams = { sortBy: 'createdAt' }) {
         const totalCount = await usersCollection.count({
             $or: [
-                { login: { $regex: params.searchLoginTerm || "", $options: '$i' } },
-                { email: { $regex: params.searchEmailTerm || "", $options: '$i' } }
-            ]
+                { login: { $regex: params.searchLoginTerm || '', $options: '$i' } },
+                { email: { $regex: params.searchEmailTerm || '', $options: '$i' } },
+            ],
         });
         const pageSize = params.pageSize || 10;
         const skip = params.pageNumber && pageSize ? (params.pageNumber - 1) * pageSize : 0;
         const users = await usersCollection
             .find({
                 $or: [
-                    { login: { $regex: params.searchLoginTerm || "", $options: '$i' } },
-                    { email: { $regex: params.searchEmailTerm || "", $options: '$i' } }
-                ]
+                    { login: { $regex: params.searchLoginTerm || '', $options: '$i' } },
+                    { email: { $regex: params.searchEmailTerm || '', $options: '$i' } },
+                ],
             })
             .toArray();
 
@@ -93,7 +93,7 @@ export class UserRepository {
         const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
         if (!user) {
-            return { user: undefined }
+            return { user: undefined };
         }
 
         return { user: createUserDto(user), confirmation: user.confirmation };
@@ -103,8 +103,8 @@ export class UserRepository {
         const user = await usersCollection.findOne({
             $or: [
                 { login: { $regex: loginOrEmail, $options: '$i' } },
-                { email: { $regex: loginOrEmail, $options: '$i' } }
-            ]
+                { email: { $regex: loginOrEmail, $options: '$i' } },
+            ],
         });
 
         if (!user) {
@@ -131,12 +131,36 @@ export class UserRepository {
             return;
         }
 
-        await usersCollection.updateOne({ _id: user._id }, {
-            $set: {
-                ...user,
-                confirmation
-            }
-        });
+        await usersCollection.updateOne(
+            { _id: user._id },
+            {
+                $set: {
+                    ...user,
+                    confirmation,
+                },
+            },
+        );
+
+        return UserRepository.getUser(id);
+    }
+
+    static async updateUserPassword(id: string, hash: string, salt: string) {
+        const user = await usersCollection.findOne({ _id: new ObjectId(id) });
+
+        if (!user) {
+            return;
+        }
+
+        await usersCollection.updateOne(
+            { _id: user._id },
+            {
+                $set: {
+                    ...user,
+                    hash,
+                    salt,
+                },
+            },
+        );
 
         return UserRepository.getUser(id);
     }

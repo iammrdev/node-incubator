@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { tokensCollection } from '../../lib/db/index';
+import { recoveryPasswordCollection, tokensCollection } from '../../lib/db/index';
 
 export class AuthRepository {
     static async saveRefreshToken({
@@ -96,5 +96,49 @@ export class AuthRepository {
         await tokensCollection.deleteMany({});
 
         return [];
+    }
+
+    static async saveRecoveryCode({
+        ip,
+        title,
+        userId,
+        deviceId,
+        code,
+        iat,
+        exp,
+    }: {
+        ip: string;
+        title: string;
+        userId: string;
+        deviceId: string;
+        code: string;
+        iat: number;
+        exp: number;
+    }) {
+        const token = {
+            ip,
+            title,
+            userId,
+            deviceId,
+            code,
+            iat,
+            exp,
+        };
+
+        const item = await recoveryPasswordCollection.insertOne(token);
+
+        return AuthRepository.getRecoveryById(item.insertedId.toString());
+    }
+
+    static async getRecoveryById(id: string) {
+        const recovery = await recoveryPasswordCollection.findOne({ _id: new ObjectId(id) });
+
+        return recovery;
+    }
+
+    static async getRecoveryByCode(code: string) {
+        const recovery = await recoveryPasswordCollection.findOne({ code });
+
+        return recovery;
     }
 }

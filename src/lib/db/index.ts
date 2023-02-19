@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { RefreshToken } from '../../api/auth/auth.types';
+import { RecoveryPassword, RefreshToken } from '../../api/auth/auth.types';
 import { Blog } from '../../api/blogs/blog.types';
 import { Comment } from '../../api/comments/comment.types';
 import { Post } from '../../api/posts/post.types';
@@ -21,6 +21,7 @@ export const usersCollection = db.collection<User>('users');
 export const commentsCollection = db.collection<Comment>('comments');
 export const tokensCollection = db.collection<RefreshToken>('tokens');
 export const authAttemptsCollection = db.collection<AuthAttempt>('auth-attempts');
+export const recoveryPasswordCollection = db.collection<RecoveryPassword>('recovery-password');
 
 export const runDB = async () => {
     try {
