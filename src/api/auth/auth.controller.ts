@@ -222,8 +222,8 @@ const refreshToken = async (req: Request, res: Response) => {
     }
 
     const tokens = {
-        accessToken: UserService.createJWT(userId.toString(), { expiresIn: '10s' }),
-        refreshToken: UserService.createJWT(userId.toString(), { deviceId: tokenInfo.deviceId, expiresIn: '20s' }),
+        accessToken: UserService.createJWT(userId.toString(), { expiresIn: '10m' }),
+        refreshToken: UserService.createJWT(userId.toString(), { deviceId: tokenInfo.deviceId, expiresIn: '20m' }),
     };
 
     const refreshTokenPayload = jwt.decode(tokens.refreshToken) as JwtPayload;

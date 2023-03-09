@@ -36,6 +36,29 @@ export const bearerAuth = async (req: Request, res: Response, next: NextFunction
     next();
 };
 
+export const bearerUser = async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.headers.authorization) {
+        return next();
+    }
+
+    const [type, token] = req.headers.authorization.split(' ');
+    const userId = await UserService.getUserIdByToken(token);
+
+    if (!type || !userId) {
+        return next();
+    }
+
+    const { user } = await UserService.getUser(userId.toString());
+
+    if (!user) {
+        return next();
+    }
+
+    req.user = user;
+
+    next();
+};
+
 export const checkRefreshToken = (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken;
 

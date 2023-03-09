@@ -1,4 +1,5 @@
 @baseUrl =  http://localhost:5000
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDBhN2MzYzIwNTkyZWU3YzM1NThiYmYiLCJpYXQiOjE2Nzg0MDg3NjcsImV4cCI6MTY3ODQwOTM2N30.xPoVhl10oCDnFDjhBhNH2a5_ewE60US6Zzj7ASv7ru0
 
 ###
 
@@ -20,7 +21,7 @@ Content-Type: application/json
 
 {
   "loginOrEmail": "224box",
-  "password": "224box@mail.ru"
+  "password": 123456
 }
 
 ###
@@ -61,5 +62,31 @@ Content-Type: application/json
 {
   "newPassword": "123456",
   "recoveryCode": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2YyYWZlMDdlOWQ4MThiZDY0ZDA5NjMiLCJkZXZpY2VJZCI6IjU0NzhiYmFlLTFjZDQtNDU4MC1iZmU3LWJhNGVkODI5MTljYyIsImlhdCI6MTY3Njg0OTEyOSwiZXhwIjoxNjc2ODUwMzI5fQ.xtR8jOOCxZBDL_qd9I1pfZysj_I7l-QPoKy_acHHzPE"
+}
+###
+
+## Получить комментарий
+GET {{baseUrl}}/comments/640a7ddce36839a503c13a7e HTTP/1.1
+Content-Type: application/json
+Authorization: {{token}}
+###
+
+## Новый комментарий
+POST {{baseUrl}}/posts/640a7b108105ac39c2120b08/comments HTTP/1.1
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "content": "1234sdssfdsfddsdsfd56"
+}
+###
+
+## Лайк
+PUT {{baseUrl}}/comments/640a7ddce36839a503c13a7e/like-status HTTP/1.1
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "likeStatus": "Like"
 }
 ###

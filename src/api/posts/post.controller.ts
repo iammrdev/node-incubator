@@ -92,9 +92,8 @@ const updatePost = async (req: Request, res: Response) => {
     return res.sendStatus(StatusCodes.NO_CONTENT);
 };
 
-
 const getCommentsByPost = async (req: Request, res: Response) => {
-    const id = req.params.id
+    const id = req.params.id;
 
     const errors = validationResult.withDefaults({
         formatter: (error) => {
@@ -117,13 +116,16 @@ const getCommentsByPost = async (req: Request, res: Response) => {
         return res.sendStatus(StatusCodes.NOT_FOUND);
     }
 
-    const comments = await CommentService.getCommentsByPost(id, {
-        pageNumber: Number(req.query.pageNumber) || 1,
-        pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10,
-        sortBy: req.query.sortBy as string,
-        sortDirection: req.query.sortDirection as 'asc' | 'desc',
-    });
-
+    const comments = await CommentService.getCommentsByPost(
+        id,
+        {
+            pageNumber: Number(req.query.pageNumber) || 1,
+            pageSize: req.query.pageSize ? Number(req.query.pageSize) : 10,
+            sortBy: req.query.sortBy as string,
+            sortDirection: req.query.sortDirection as 'asc' | 'desc',
+        },
+        req.user?.id,
+    );
 
     return res.status(StatusCodes.OK).send(comments);
 };
@@ -131,7 +133,6 @@ const getCommentsByPost = async (req: Request, res: Response) => {
 const createCommentByPost = async (req: Request, res: Response) => {
     const id = req.params.id;
     const data: Pick<CommentCreateModel, 'content'> = req.body;
-
 
     const errors = validationResult.withDefaults({
         formatter: (error) => {
@@ -156,14 +157,15 @@ const createCommentByPost = async (req: Request, res: Response) => {
 
     const result = await CommentService.createCommentByPost(id, {
         content: data.content,
-        userId: req.user.id,
-        postId: id
-
+        commentatorInfo: {
+            userId: req.user.id,
+            userLogin: req.user.login,
+        },
+        postId: id,
     });
 
     return res.status(StatusCodes.CREATED).send(result);
 };
-
 
 export const PostController = {
     getPosts,
@@ -172,6 +174,5 @@ export const PostController = {
     updatePost,
     createPost,
     createCommentByPost,
-    getCommentsByPost
-
+    getCommentsByPost,
 };

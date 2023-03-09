@@ -14,8 +14,8 @@ const login = async ({ loginOrEmail, password, ip, title }: UserLoginModel) => {
     const deviceId = uuidv4();
 
     const tokens = {
-        accessToken: UserService.createJWT(user._id.toString(), { expiresIn: '10s' }),
-        refreshToken: UserService.createJWT(user._id.toString(), { deviceId, expiresIn: '20s' }),
+        accessToken: UserService.createJWT(user._id.toString(), { expiresIn: '10m' }),
+        refreshToken: UserService.createJWT(user._id.toString(), { deviceId, expiresIn: '20m' }),
     };
 
     const refreshTokenPayload = jwt.decode(tokens.refreshToken) as JwtPayload;

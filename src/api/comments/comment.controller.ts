@@ -4,11 +4,10 @@ import { StatusCodes } from 'http-status-codes';
 import { CommentService } from './comment.service';
 import { CommentCreateModel } from './comment.types';
 
-
 const getComment = async (req: Request, res: Response) => {
     const id = req.params.id;
 
-    const result = await CommentService.getComment(id);
+    const result = await CommentService.getComment(id, req.user?.id);
 
     if (!result) {
         return res.sendStatus(StatusCodes.NOT_FOUND);
@@ -57,8 +56,37 @@ const updateComment = async (req: Request, res: Response) => {
     return res.sendStatus(StatusCodes.NO_CONTENT);
 };
 
+const updateCommentLikes = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const data = req.body;
+
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const result = await CommentService.setLikeStatus(data.likeStatus, id, req.user.id);
+
+    if (!result) {
+        return res.sendStatus(StatusCodes.NOT_FOUND);
+    }
+
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
 export const CommentController = {
     getComment,
     updateComment,
     deleteComment,
+    updateCommentLikes,
 };
