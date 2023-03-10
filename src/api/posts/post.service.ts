@@ -1,3 +1,5 @@
+import { LikeStatus } from '../comments/comment.repository';
+import { UserResponseModel } from '../users/user.types';
 import { PostRepository } from './post.repository';
 import { GetPostsByBlogIdParams, Post } from './post.types';
 
@@ -9,12 +11,12 @@ const createPostByBlog = async (blogId: string, data: Omit<Post, 'id'>) => {
     return PostRepository.createPostByBlog(blogId, data);
 };
 
-const getAll = async (params: GetPostsByBlogIdParams) => {
-    return PostRepository.getAll(params);
+const getAll = async (params: GetPostsByBlogIdParams, currentUserId?: string) => {
+    return PostRepository.getAll(params, currentUserId);
 };
 
-const getAllByBlog = async (blogId: string, params: GetPostsByBlogIdParams) => {
-    return PostRepository.getAllByBlog(blogId, params);
+const getAllByBlog = async (blogId: string, params: GetPostsByBlogIdParams, currentUserId?: string) => {
+    return PostRepository.getAllByBlog(blogId, params, currentUserId);
 };
 
 const updateById = async (id: string, data: Post) => {
@@ -25,8 +27,20 @@ const deleteById = async (id: string) => {
     return PostRepository.deletePost(id);
 };
 
-const getById = async (id: string) => {
-    return PostRepository.getPost(id);
+const getById = async (id: string, currentUserId?: string) => {
+    return PostRepository.getPost(id, currentUserId);
+};
+
+const setLikeStatus = async (likeStatus: LikeStatus, postId: string, user: UserResponseModel) => {
+    if (likeStatus === LikeStatus.Like) {
+        return PostRepository.likeComment(user, postId);
+    }
+
+    if (likeStatus === LikeStatus.Dislike) {
+        return PostRepository.dislikeComment(user, postId);
+    }
+
+    return PostRepository.removeLikes(user, postId);
 };
 
 export const PostService = {
@@ -37,4 +51,5 @@ export const PostService = {
     updateById,
     deleteById,
     getById,
+    setLikeStatus,
 };

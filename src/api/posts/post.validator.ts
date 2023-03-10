@@ -79,3 +79,14 @@ export const getPostSchema = checkSchema({
         isMongoId: {},
     },
 });
+
+export const setLikeStatusSchema = checkSchema({
+    likeStatus: {
+        in: ['body'],
+        trim: {},
+        notEmpty: {},
+        matches: {
+            options: [/\b(?:None|Like|Dislike)\b/],
+        },
+    },
+});

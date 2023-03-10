@@ -7,20 +7,23 @@ import { PostService } from './post.service';
 import { Post } from './post.types';
 
 const getPosts = async (req: Request, res: Response) => {
-    const posts = await PostService.getAll({
-        pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
-        pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
-        sortBy: req.query.sortBy as string,
-        sortDirection: req.query.sortDirection as 'asc' | 'desc',
-    });
+    const posts = await PostService.getAll(
+        {
+            pageNumber: req.query.pageNumber ? Number(req.query.pageNumber) : undefined,
+            pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+            sortBy: req.query.sortBy as string,
+            sortDirection: req.query.sortDirection as 'asc' | 'desc',
+        },
+        req.user?.id,
+    );
 
     return res.status(StatusCodes.OK).send(posts);
 };
 
 const getPost = async (req: Request, res: Response) => {
     const id = req.params.id;
-
-    const result = await PostService.getById(id);
+    console.log({ user: req.user });
+    const result = await PostService.getById(id, req.user?.id);
 
     if (!result) {
         return res.sendStatus(StatusCodes.NOT_FOUND);
@@ -110,7 +113,7 @@ const getCommentsByPost = async (req: Request, res: Response) => {
         });
     }
 
-    const result = await PostService.getById(id);
+    const result = await PostService.getById(id, req.user?.id);
 
     if (!result) {
         return res.sendStatus(StatusCodes.NOT_FOUND);
@@ -167,6 +170,34 @@ const createCommentByPost = async (req: Request, res: Response) => {
     return res.status(StatusCodes.CREATED).send(result);
 };
 
+const updatePostLikes = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const data = req.body;
+
+    const errors = validationResult.withDefaults({
+        formatter: (error) => {
+            return {
+                field: error.param,
+                message: error.msg,
+            };
+        },
+    })(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(StatusCodes.BAD_REQUEST).send({
+            errorsMessages: errors.array({ onlyFirstError: true }),
+        });
+    }
+
+    const result = await PostService.setLikeStatus(data.likeStatus, id, req.user);
+
+    if (!result) {
+        return res.sendStatus(StatusCodes.NOT_FOUND);
+    }
+
+    return res.sendStatus(StatusCodes.NO_CONTENT);
+};
+
 export const PostController = {
     getPosts,
     getPost,
@@ -175,4 +206,5 @@ export const PostController = {
     createPost,
     createCommentByPost,
     getCommentsByPost,
+    updatePostLikes,
 };

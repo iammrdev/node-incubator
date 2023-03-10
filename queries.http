@@ -1,7 +1,5 @@
 @baseUrl =  http://localhost:5000
-@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDBhN2MzYzIwNTkyZWU3YzM1NThiYmYiLCJpYXQiOjE2Nzg0MDg3NjcsImV4cCI6MTY3ODQwOTM2N30.xPoVhl10oCDnFDjhBhNH2a5_ewE60US6Zzj7ASv7ru0
-
-###
+@token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NDBiZGI0OTFmYjU4ZmEwMzBhODM4ODkiLCJpYXQiOjE2Nzg0OTg2NzMsImV4cCI6MTY3ODQ5OTI3M30.MJLUsIZnfYhCdZZGrx31ssh2QOFRz0yKDyY4cegI5VQ
 
 ## Регистрация
 POST {{baseUrl}}/auth/registration HTTP/1.1
@@ -65,6 +63,13 @@ Content-Type: application/json
 }
 ###
 
+## Получить пост
+GET {{baseUrl}}/posts/640bb6466ca94d2d29c8b053 HTTP/1.1
+Content-Type: application/json
+Authorization: {{token}}
+###
+
+
 ## Получить комментарий
 GET {{baseUrl}}/comments/640a7ddce36839a503c13a7e HTTP/1.1
 Content-Type: application/json
@@ -81,8 +86,18 @@ Authorization: {{token}}
 }
 ###
 
-## Лайк
+## Лайк комментария
 PUT {{baseUrl}}/comments/640a7ddce36839a503c13a7e/like-status HTTP/1.1
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "likeStatus": "Like"
+}
+###
+
+## Лайк поста
+PUT {{baseUrl}}/posts/640bd75e74b1ef4ed8474a53/like-status HTTP/1.1
 Content-Type: application/json
 Authorization: {{token}}
 

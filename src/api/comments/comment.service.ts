@@ -22,8 +22,6 @@ const createCommentByPost = async (postId: string, params: CommentCreateModel) =
 };
 
 const setLikeStatus = async (likeStatus: LikeStatus, commentId: string, userId: string) => {
-    console.log({ likeStatus });
-
     if (likeStatus === LikeStatus.Like) {
         return CommentRepository.likeComment(userId, commentId);
     }
