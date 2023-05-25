@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { basicAuth, bearerAuth, bearerUser } from '../auth/auth.middlewares';
 import { createCommentSchema } from '../comments/comment.validator';
 import { PostController } from './post.controller';
 import { createPostSchema, getPostSchema, setLikeStatusSchema } from './post.validator';
@@ -7,20 +8,20 @@ const postRouter = Router();
 
 postRouter
     .route('/')
-    .get(PostController.getPosts)
-    .post(createPostSchema, PostController.createPost);
+    .get(bearerUser, PostController.getPosts)
+    .post(basicAuth, createPostSchema, PostController.createPost);
 
 postRouter
     .route('/:id')
-    .get(PostController.getPost)
-    .put(createPostSchema, PostController.updatePost)
-    .delete(PostController.deletePost);
+    .get(bearerUser, PostController.getPost)
+    .put(basicAuth, createPostSchema, PostController.updatePost)
+    .delete(basicAuth, PostController.deletePost);
 
 postRouter
     .route('/:id/comments')
-    .get(getPostSchema, PostController.getCommentsByPost)
-    .post(getPostSchema, createCommentSchema, PostController.createCommentByPost);
+    .get(bearerUser, getPostSchema, PostController.getCommentsByPost)
+    .post(bearerAuth, getPostSchema, createCommentSchema, PostController.createCommentByPost);
 
-postRouter.route('/:id/like-status').put(setLikeStatusSchema, PostController.updatePostLikes);
+postRouter.route('/:id/like-status').put(bearerAuth, setLikeStatusSchema, PostController.updatePostLikes);
 
 export { postRouter };
